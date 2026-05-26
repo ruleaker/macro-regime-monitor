@@ -1,0 +1,64 @@
+{
+  "captured_utc": "2026-05-26 23:20 UTC",
+  "net_effect_pp": -4.2,
+  "triggered_durable_bear": [
+    {
+      "name": "MARGIN_M2",
+      "effect_pp": -13.2
+    }
+  ],
+  "triggered_durable_bull": [],
+  "triggered_mostly_bear": [],
+  "triggered_mostly_bull": [
+    {
+      "name": "NDX_SPX_RS",
+      "effect_pp": 4.8
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "effect_pp": 4.2
+    }
+  ],
+  "rows": [
+    {
+      "name": "MARGIN_M2",
+      "short_name": "Margin debt / M2",
+      "current_value": 0.05719401872437457,
+      "current_percentile": 0.9943181818181818,
+      "zone": "HIGH",
+      "tier": "DURABLE",
+      "effect_pp": -13.2,
+      "latest_date": "2026-04"
+    },
+    {
+      "name": "NDX_SPX_RS",
+      "short_name": "NDX vs SPX 3m RS",
+      "current_value": 9.96279804841327,
+      "current_percentile": 0.9257731958762887,
+      "zone": "HIGH",
+      "tier": "MOSTLY",
+      "effect_pp": 4.8,
+      "latest_date": "2026-05"
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "short_name": "SOX vs SPX 3m RS",
+      "current_value": 45.467044698128966,
+      "current_percentile": 0.9947643979057592,
+      "zone": "HIGH",
+      "tier": "MOSTLY",
+      "effect_pp": 4.2,
+      "latest_date": "2026-05"
+    },
+    {
+      "name": "MCAP_M2",
+      "short_name": "Market cap / M2 (Buffett indicator variant)",
+      "current_value": 3.159550472494464,
+      "current_percentile": 1.0,
+      "zone": "HIGH",
+      "tier": "TOMBSTONE",
+      "effect_pp": null,
+      "latest_date": "2026-04"
+    }
+  ]
+}

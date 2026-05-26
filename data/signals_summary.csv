@@ -1,0 +1,8 @@
+signal,category,description,start,end,months,current_value,current_percentile,in_extreme_low,in_extreme_high
+MCAP_M2,valuation_liquidity,Wilshire 5000 / M2 - market cap to money supply ratio (Buffett indicator variant),1989-01,2026-04,448,3.159550472494464,1.0,False,True
+M2_GROWTH,liquidity_flow,M2 year-over-year growth rate (%),1961-01,2026-04,784,4.724532391610836,0.23979591836734693,False,False
+NET_LIQUIDITY,liquidity_stock,"Net Liquidity (Fed BS - TGA - RRP), trillions USD",2003-02,2026-05,178,5.930563,0.7921348314606742,False,False
+MARGIN_M2,speculative_leverage,FINRA margin debt / M2 - speculative leverage relative to liquidity,1997-01,2026-04,352,0.05719401872437457,0.9943181818181818,False,True
+NDX_SPX_RS,internal_leadership,NDX/SPX 3-month rate of change (%) - leadership rotation,1986-01,2026-05,485,9.96279804841327,0.9257731958762887,False,True
+SOX_SPX_RS,internal_leadership,SOX/SPX 3-month rate of change (%) - leadership rotation,1994-08,2026-05,382,45.467044698128966,0.9947643979057592,False,True
+RUT_SPX_RS,internal_leadership,RUT/SPX 3-month rate of change (%) - leadership rotation,1987-12,2026-05,462,1.5005731604924577,0.6428571428571429,False,False
