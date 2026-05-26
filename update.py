@@ -107,8 +107,11 @@ def main() -> int:
                                          out_path=CHARTS / "conditional_returns.png")
     print(f"  wrote {p2}")
 
-    print("\nUpdating README + saving snapshot...")
-    render.render_readme(README, snap, signals)
+    print("\nUpdating READMEs + saving snapshot...")
+    render.render_readme(README, snap, signals, lang="en")
+    readme_zh = ROOT / "README.zh-CN.md"
+    if readme_zh.exists():
+        render.render_readme(readme_zh, snap, signals, lang="zh")
     save_snapshot(snap)
 
     print("\nCurrent state (production signals):")

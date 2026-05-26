@@ -1,9 +1,11 @@
+**English** · [中文](README.zh-CN.md)
+
 # Macro Regime Monitor
 
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-26 23:26 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-26 23:32 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
