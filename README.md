@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-26 23:32 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-27 23:22 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -25,8 +25,8 @@ _Last updated: **2026-05-26 23:32 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 | Signal | Current value | Percentile | Zone | Tier | Effect (12m fwd SPX) |
 |---|---:|---:|:-:|:-:|---:|
 | Margin debt / M2 | 0.057 | 99% | HIGH [BEAR] | DURABLE | -13.2pp |
-| NDX vs SPX 3m RS | 9.963 | 93% | HIGH [BULL] | MOSTLY | +4.8pp |
-| SOX vs SPX 3m RS | 45.467 | 99% | HIGH [BULL] | MOSTLY | +4.2pp |
+| NDX vs SPX 3m RS | 9.843 | 92% | HIGH [BULL] | MOSTLY | +4.8pp |
+| SOX vs SPX 3m RS | 43.470 | 99% | HIGH [BULL] | MOSTLY | +4.2pp |
 | Market cap / M2 (Buffett indicator variant) | 3.160 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
 <!-- END:SIGNAL_TABLE -->
 
