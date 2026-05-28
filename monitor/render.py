@@ -13,6 +13,7 @@ import pandas as pd
 
 from .signals import Signal
 from .composite import CompositeState
+from .trend import TrendState
 
 
 def _pp(x: float, dp: int = 1) -> str:
@@ -87,6 +88,64 @@ def composite_block_en(state: CompositeState) -> str:
         "",
         f"Built from {state.n_components} components: " + ", ".join(state.components_used) + ".",
     ]
+    return "\n".join(lines)
+
+
+def trend_block_en(states: dict, score: dict) -> str:
+    direction_arrow = {1: "↑ UP", -1: "↓ DOWN", 0: "— flat"}
+    impl_emoji = {"release": "🟢 RELEASE", "tighten": "🔴 TIGHTEN", "neutral": "⚪ neutral"}
+    lines = []
+    bias = (
+        "**leans LIQUIDITY RELEASE**" if score["score"] >= 2 else
+        "**leans LIQUIDITY TIGHTEN**" if score["score"] <= -2 else
+        "**MIXED / no consensus**"
+    )
+    lines.append(f"**Liquidity flow score: `{score['score']:+d}/{score['n_total']}` — {bias}**")
+    lines.append(f"  · {score['release_count']} variables in release direction, "
+                  f"{score['tighten_count']} in tightening, {score['neutral_count']} neutral")
+    lines.append("")
+    lines.append("| Variable | Direction | Current | Last flip | Age | Implication |")
+    lines.append("|---|:-:|---:|:-:|---:|:-:|")
+    for name, s in states.items():
+        dir_str = direction_arrow.get(s.direction, "—")
+        flip_str = s.last_flip_date.strftime("%Y-%m") if s.last_flip_date is not None else "stable"
+        age_str = f"{s.months_since_flip:.1f}m" if s.months_since_flip is not None else "—"
+        impl_str = impl_emoji.get(s.liquidity_implication, "—")
+        val_str = f"{s.current_value:.3f}" if abs(s.current_value) < 1000 else f"{s.current_value:,.0f}"
+        lines.append(f"| {s.short_name} ({name}) | {dir_str} | {val_str} | {flip_str} | {age_str} | {impl_str} |")
+    return "\n".join(lines)
+
+
+def trend_block_zh(states: dict, score: dict) -> str:
+    direction_arrow = {1: "↑ 上行", -1: "↓ 下行", 0: "— 持平"}
+    impl_emoji = {"release": "🟢 放水", "tighten": "🔴 紧缩", "neutral": "⚪ 中性"}
+    name_zh = {
+        "WALCL": "美联储资产负债表",
+        "NETLIQ": "Net Liquidity (Fed BS − TGA − RRP)",
+        "M2_LEVEL": "M2 货币供应量",
+        "DGS10": "10年期国债收益率",
+        "DXY": "美元指数 DXY",
+    }
+    lines = []
+    bias = (
+        "**偏向流动性放水**" if score["score"] >= 2 else
+        "**偏向流动性紧缩**" if score["score"] <= -2 else
+        "**MIXED / 信号不明确**"
+    )
+    lines.append(f"**流动性流向分数: `{score['score']:+d}/{score['n_total']}` — {bias}**")
+    lines.append(f"  · {score['release_count']} 个变量指向放水, "
+                  f"{score['tighten_count']} 个紧缩, {score['neutral_count']} 中性")
+    lines.append("")
+    lines.append("| 变量 | 方向 | 当前值 | 上次拐点 | 趋势年龄 | 含义 |")
+    lines.append("|---|:-:|---:|:-:|---:|:-:|")
+    for name, s in states.items():
+        dir_str = direction_arrow.get(s.direction, "—")
+        flip_str = s.last_flip_date.strftime("%Y-%m") if s.last_flip_date is not None else "稳定"
+        age_str = f"{s.months_since_flip:.1f}m" if s.months_since_flip is not None else "—"
+        impl_str = impl_emoji.get(s.liquidity_implication, "—")
+        val_str = f"{s.current_value:.3f}" if abs(s.current_value) < 1000 else f"{s.current_value:,.0f}"
+        display_name = name_zh.get(name, s.short_name)
+        lines.append(f"| {display_name} | {dir_str} | {val_str} | {flip_str} | {age_str} | {impl_str} |")
     return "\n".join(lines)
 
 
@@ -197,6 +256,8 @@ def render_readme(
     snap: dict,
     signals: dict[str, Signal],
     composite_state: CompositeState | None = None,
+    trend_states: dict | None = None,
+    trend_score: dict | None = None,
     lang: str = "en",
 ) -> None:
     text = readme_path.read_text(encoding="utf-8")
@@ -206,10 +267,14 @@ def render_readme(
         text = replace_marker(text, "SIGNAL_TABLE", signal_table_zh(snap, signals))
         if composite_state is not None:
             text = replace_marker(text, "COMPOSITE", composite_block_zh(composite_state))
+        if trend_states is not None and trend_score is not None:
+            text = replace_marker(text, "TREND_PANEL", trend_block_zh(trend_states, trend_score))
     else:
         text = replace_marker(text, "STAMP", stamp_text_en(snap))
         text = replace_marker(text, "HEADLINE", headline_en(snap))
         text = replace_marker(text, "SIGNAL_TABLE", signal_table_en(snap, signals))
         if composite_state is not None:
             text = replace_marker(text, "COMPOSITE", composite_block_en(composite_state))
+        if trend_states is not None and trend_score is not None:
+            text = replace_marker(text, "TREND_PANEL", trend_block_en(trend_states, trend_score))
     readme_path.write_text(text, encoding="utf-8")

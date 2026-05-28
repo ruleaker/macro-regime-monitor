@@ -22,6 +22,7 @@ import pandas as pd
 
 from .signals import Signal, QUINTILE_LOW, QUINTILE_HIGH
 from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS, DRAWDOWN_STATS
+from .trend import TrendState, supertrend
 
 BG = "#0d1117"
 FG = "#e6edf3"
@@ -219,6 +220,77 @@ def plot_composite_decile_returns(out_path: Path) -> Path:
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     fig.text(0.99, 0.005, f"Source: research/6_composite.py  ·  Updated {stamp}",
              ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
+
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=170, facecolor=BG)
+    plt.close(fig)
+    return out_path
+
+
+def plot_liquidity_trends(states: dict, out_path: Path) -> Path:
+    """5-panel chart: SuperTrend on each macro variable with flip markers + direction shading."""
+    items = [(name, st) for name, st in states.items() if not pd.isna(st.current_value)]
+    n = len(items)
+    if n == 0:
+        return out_path
+
+    fig, axes = plt.subplots(n, 1, figsize=(12, 1.7 * n), sharex=True)
+    if n == 1:
+        axes = [axes]
+    fig.patch.set_facecolor(BG)
+
+    # Earliest start across all series
+    start_date = pd.Timestamp("2005-01-01")
+
+    for ax, (name, st) in zip(axes, items):
+        st_df = supertrend(st.series.dropna())
+        st_df = st_df[st_df.index >= start_date]
+        if st_df.empty:
+            continue
+
+        # Shade direction regions
+        for i in range(1, len(st_df)):
+            d = st_df["direction"].iloc[i]
+            if d == 0:
+                continue
+            # Color by liquidity meaning
+            is_release = (d == 1 and st.higher_means_release) or (d == -1 and not st.higher_means_release)
+            color = BAND_BG_LOW if is_release else BAND_BG
+            ax.axvspan(st_df.index[i - 1], st_df.index[i], color=color, zorder=0)
+
+        # Value line
+        ax.plot(st_df.index, st_df["value"], color=FG, linewidth=1.3)
+
+        # Flip markers
+        flips = st_df[st_df["flip"]]
+        for flip_date, row in flips.iterrows():
+            is_release_flip = ((row["direction"] == 1 and st.higher_means_release) or
+                                (row["direction"] == -1 and not st.higher_means_release))
+            marker_color = BULL if is_release_flip else BEAR
+            ax.scatter([flip_date], [row["value"]], color=marker_color,
+                        s=35, zorder=5, edgecolors=FG, linewidths=0.8)
+
+        # Right-side current state label
+        impl_color = BULL if st.liquidity_implication == "release" else BEAR if st.liquidity_implication == "tighten" else NEUTRAL
+        age_str = f" · {st.months_since_flip:.0f}m" if st.months_since_flip and st.months_since_flip < 200 else ""
+        label = f"{'↑' if st.direction == 1 else '↓' if st.direction == -1 else '—'} {st.liquidity_implication}{age_str}"
+        ax.text(0.99, 0.5, label, transform=ax.transAxes,
+                color=impl_color, fontsize=9, ha="right", va="center",
+                fontweight="bold",
+                bbox=dict(facecolor=BG, edgecolor=impl_color, alpha=0.85, pad=4))
+
+        ax.set_ylabel(name, color=FG, fontsize=9)
+        _style_ax(ax)
+
+    axes[-1].xaxis.set_major_locator(mdates.YearLocator(2))
+    axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+    axes[0].set_title("Liquidity Trend Panel — SuperTrend(10, 2.0) direction per macro variable",
+                       color=FG, fontsize=13, fontweight="bold", pad=12, loc="left")
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.text(0.99, 0.005,
+              f"Green = liquidity-release direction  ·  Red = liquidity-tightening direction  ·  Updated {stamp}",
+              ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
 
     plt.tight_layout()
     fig.savefig(out_path, dpi=170, facecolor=BG)

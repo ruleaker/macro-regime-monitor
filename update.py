@@ -21,6 +21,7 @@ from monitor import signals as sig_mod
 from monitor import plots
 from monitor import render
 from monitor import composite as comp_mod
+from monitor import trend as trend_mod
 
 ROOT = Path(__file__).resolve().parent
 CHARTS = ROOT / "charts"
@@ -121,11 +122,21 @@ def main() -> int:
     p5 = plots.plot_drawdown_asymmetry(CHARTS / "drawdown_asymmetry.png")
     print(f"  wrote {p5}")
 
+    print("\nBuilding liquidity trend panel...")
+    trend_states = trend_mod.build_all_trends()
+    trend_score = trend_mod.liquidity_flow_score(trend_states)
+    print(f"  trend score: {trend_score['score']:+d}/{trend_score['n_total']} "
+          f"(release: {trend_score['release_count']}, tighten: {trend_score['tighten_count']})")
+    p6 = plots.plot_liquidity_trends(trend_states, CHARTS / "liquidity_trends.png")
+    print(f"  wrote {p6}")
+
     print("\nUpdating READMEs + saving snapshot...")
-    render.render_readme(README, snap, signals, composite_state, lang="en")
+    render.render_readme(README, snap, signals, composite_state,
+                          trend_states=trend_states, trend_score=trend_score, lang="en")
     readme_zh = ROOT / "README.zh-CN.md"
     if readme_zh.exists():
-        render.render_readme(readme_zh, snap, signals, composite_state, lang="zh")
+        render.render_readme(readme_zh, snap, signals, composite_state,
+                              trend_states=trend_states, trend_score=trend_score, lang="zh")
     save_snapshot(snap)
 
     # Also persist composite series to disk

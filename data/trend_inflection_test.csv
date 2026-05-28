@@ -1,0 +1,49 @@
+technique,variable,event,event_date,expected_dir,detected_date,lag_months
+"SuperTrend(10, 2.0)",WALCL,2020-03_covid_easing,2020-03,1,2023-04,37.5
+"SuperTrend(10, 2.0)",WALCL,2022-01_qt_pivot,2022-01,-1,2022-10,9.0
+"EMA(3,12)",WALCL,2020-03_covid_easing,2020-03,1,2026-05,74.5
+"EMA(3,12)",WALCL,2022-01_qt_pivot,2022-01,-1,2022-12,11.0
+"EMA(6,24)",WALCL,2020-03_covid_easing,2020-03,1,2020-03,0.5
+"EMA(6,24)",WALCL,2022-01_qt_pivot,2022-01,-1,2023-09,19.9
+Donchian(12),WALCL,2020-03_covid_easing,2020-03,1,2026-05,74.5
+Donchian(12),WALCL,2022-01_qt_pivot,2022-01,-1,2022-11,10.0
+"SuperTrend(10, 2.0)",NETLIQ,2020-03_covid_easing,2020-03,1,2023-03,36.5
+"SuperTrend(10, 2.0)",NETLIQ,2022-01_qt_pivot,2022-01,-1,2022-02,0.9
+"EMA(3,12)",NETLIQ,2020-03_covid_easing,2020-03,1,2023-06,39.5
+"EMA(3,12)",NETLIQ,2022-01_qt_pivot,2022-01,-1,2022-04,2.9
+"EMA(6,24)",NETLIQ,2020-03_covid_easing,2020-03,1,2020-03,0.5
+"EMA(6,24)",NETLIQ,2022-01_qt_pivot,2022-01,-1,2022-10,9.0
+Donchian(12),NETLIQ,2020-03_covid_easing,2020-03,1,2023-12,45.5
+Donchian(12),NETLIQ,2022-01_qt_pivot,2022-01,-1,2022-04,2.9
+"SuperTrend(10, 2.0)",M2_LEVEL,2020-03_covid_easing,2020-03,1,2024-02,47.5
+"SuperTrend(10, 2.0)",M2_LEVEL,2022-01_qt_pivot,2022-01,-1,2022-10,9.0
+"EMA(3,12)",M2_LEVEL,2020-03_covid_easing,2020-03,1,2024-03,48.5
+"EMA(3,12)",M2_LEVEL,2022-01_qt_pivot,2022-01,-1,2022-12,11.0
+"EMA(6,24)",M2_LEVEL,2020-03_covid_easing,2020-03,1,2024-01,46.6
+"EMA(6,24)",M2_LEVEL,2022-01_qt_pivot,2022-01,-1,2023-11,21.9
+Donchian(12),M2_LEVEL,2020-03_covid_easing,2020-03,1,2024-03,48.5
+Donchian(12),M2_LEVEL,2022-01_qt_pivot,2022-01,-1,2022-12,11.0
+"SuperTrend(10, 2.0)",M2_GROWTH_YOY,2020-03_covid_easing,2020-03,1,2023-12,45.5
+"SuperTrend(10, 2.0)",M2_GROWTH_YOY,2022-01_qt_pivot,2022-01,-1,2025-11,46.0
+"EMA(3,12)",M2_GROWTH_YOY,2020-03_covid_easing,2020-03,1,2024-02,47.5
+"EMA(3,12)",M2_GROWTH_YOY,2022-01_qt_pivot,2022-01,-1,never,
+"EMA(6,24)",M2_GROWTH_YOY,2020-03_covid_easing,2020-03,1,2024-08,53.5
+"EMA(6,24)",M2_GROWTH_YOY,2022-01_qt_pivot,2022-01,-1,never,
+Donchian(12),M2_GROWTH_YOY,2020-03_covid_easing,2020-03,1,2024-02,47.5
+Donchian(12),M2_GROWTH_YOY,2022-01_qt_pivot,2022-01,-1,never,
+"SuperTrend(10, 2.0)",DGS10,2020-03_covid_easing,2020-03,-1,2021-07,16.5
+"SuperTrend(10, 2.0)",DGS10,2022-01_qt_pivot,2022-01,1,2024-04,26.9
+"EMA(3,12)",DGS10,2020-03_covid_easing,2020-03,-1,2024-08,53.5
+"EMA(3,12)",DGS10,2022-01_qt_pivot,2022-01,1,2024-11,34.0
+"EMA(6,24)",DGS10,2020-03_covid_easing,2020-03,-1,2021-07,16.5
+"EMA(6,24)",DGS10,2022-01_qt_pivot,2022-01,1,never,
+Donchian(12),DGS10,2020-03_covid_easing,2020-03,-1,2024-08,53.5
+Donchian(12),DGS10,2022-01_qt_pivot,2022-01,1,2025-01,36.0
+"SuperTrend(10, 2.0)",DXY,2020-03_covid_easing,2020-03,-1,2022-11,32.5
+"SuperTrend(10, 2.0)",DXY,2022-01_qt_pivot,2022-01,1,2023-10,21.0
+"EMA(3,12)",DXY,2020-03_covid_easing,2020-03,-1,2020-07,4.5
+"EMA(3,12)",DXY,2022-01_qt_pivot,2022-01,1,2023-09,19.9
+"EMA(6,24)",DXY,2020-03_covid_easing,2020-03,-1,2020-07,4.5
+"EMA(6,24)",DXY,2022-01_qt_pivot,2022-01,1,2024-10,33.0
+Donchian(12),DXY,2020-03_covid_easing,2020-03,-1,2020-07,4.5
+Donchian(12),DXY,2022-01_qt_pivot,2022-01,1,2024-12,35.0

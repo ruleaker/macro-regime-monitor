@@ -219,6 +219,49 @@ Even though the composite didn't change, the V3 research delivered real findings
 
 These are documented but not in the composite. They live as watch-list signals and analytical context.
 
+## v4 — Liquidity Trend Panel (2026-05-28)
+
+User asked: can we detect 2022 liquidity tightening early? 2020-21 liquidity release quickly? Should this be a separate panel rather than fold into the composite?
+
+The answer is yes to both. Composite is slow by design (percentile-based, designed for cycle-position). Trend detection on macro variables is a different lens — faster, inflection-oriented.
+
+### Backtest at 2020-03 (Fed COVID easing) and 2022-01 (QT pivot)
+
+Three techniques tested: SuperTrend(10, 2.0), EMA crossover (3/12 and 6/24), Donchian breakout(12). Results per variable, best detection lag:
+
+| Variable | 2020-03 easing detection | 2022-01 tightening detection |
+|---|---:|---:|
+| **NETLIQ** | 0.5m (EMA 6/24) | **0.9m (SuperTrend)** |
+| WALCL | 0.5m (EMA 6/24) | 9.0m (SuperTrend) |
+| M2_LEVEL | 46.6m (slow, monotonic) | 9.0m (SuperTrend) |
+| M2_GROWTH_YOY | 45.5m | 46.0m |
+| DGS10 | 16.5m | 26.9m |
+| DXY | 4.5m (EMA 3/12) | 19.9m (EMA 3/12) |
+
+**Net Liquidity is the most sensitive inflection detector** — both 2020 and 2022 caught within 1 month. WALCL is fast in easing (Fed announces) but slow in tightening (passive runoff). M2 GROWTH lags way too much.
+
+### Why SuperTrend works on monthly macro
+
+Classic SuperTrend uses ATR-based bands above and below price. For monthly macro, we substitute ATR with the rolling mean of absolute month-over-month delta (10-period). The bands tighten when in trend and only flip when price crosses the OPPOSITE band — making the signal sticky but responsive at true inflections.
+
+### Production design
+
+- Variables: WALCL, NETLIQ, M2_LEVEL, DGS10, DXY (5 total)
+- Single technique: SuperTrend(10, 2.0) — easier to read than 4 different techniques per variable
+- Liquidity flow score = (# in release direction) − (# in tightening direction). Range −5 to +5.
+- Score ≥ +2 = leaning release; ≤ −2 = leaning tightening; otherwise mixed.
+
+### Current state (2026-05)
+
+Score +3/5 — leans liquidity release:
+- WALCL: UP, just flipped 2 months ago (Fed BS expanding again)
+- NETLIQ: UP, stable
+- M2: UP, trend established 26 months
+- DGS10: UP just 1 month — RATES RISING TIGHTENING (the dissenting signal)
+- DXY: DOWN, 14 months of USD weakening = release
+
+Net read: 4-vs-1 lean toward release, but DGS10 recently flipping up + WALCL fresh up = "Fed loosening while market reprices growth/inflation expectations". A regime to watch.
+
 ## Open questions
 
 1. **Quintile thresholds vs decile**: should we test top-20% / bottom-20% to get more samples in extreme zones, particularly for the MARGIN_M2 and SOX_SPX_RS signals that have small N?
