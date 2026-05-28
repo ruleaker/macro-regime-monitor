@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .signals import Signal, QUINTILE_LOW, QUINTILE_HIGH
+from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS
 
 BG = "#0d1117"
 FG = "#e6edf3"
@@ -100,6 +101,123 @@ def plot_overview(signals: dict[str, Signal], spx: pd.Series, out_path: Path) ->
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     fig.text(0.99, 0.005, f"Updated {stamp}  ·  Bands: top/bottom 20%",
+             ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
+
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=170, facecolor=BG)
+    plt.close(fig)
+    return out_path
+
+
+def plot_composite(state: CompositeState, spx: pd.Series, out_path: Path) -> Path:
+    """Two-panel chart: SPX log + composite percentile rank with extreme bands."""
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(12, 6.5), sharex=True,
+        gridspec_kw={"height_ratios": [1.5, 1.5]},
+    )
+    fig.patch.set_facecolor(BG)
+
+    pct = state.percentile_series.dropna() * 100
+    series = state.series.loc[pct.index]
+
+    spx_clip = spx[spx.index >= series.index.min()]
+    ax1.plot(spx_clip.index, spx_clip.values, color=ACCENT, linewidth=1.4)
+    ax1.set_yscale("log")
+    ax1.set_ylabel("SPX (log)", color=ACCENT, fontsize=10)
+    ax1.set_title("Composite Cycle Indicator — extreme deciles historically predict 12m SPX direction",
+                  color=FG, fontsize=13, fontweight="bold", pad=12, loc="left")
+    _style_ax(ax1)
+
+    # Shade SPX panel for periods where composite is in extreme high (red) or low (green)
+    for zone_pct, color in [(pct[pct >= EXTREME_HIGH_PCT * 100], BAND_BG),
+                              (pct[pct <= EXTREME_LOW_PCT * 100], BAND_BG_LOW)]:
+        if zone_pct.empty:
+            continue
+        # Draw vertical spans for contiguous regions
+        idx = zone_pct.index
+        for i, d in enumerate(idx):
+            span_color = color.replace("22", "33")
+            ax1.axvspan(d - pd.Timedelta(days=15), d + pd.Timedelta(days=15),
+                        color=span_color, zorder=0)
+
+    # Bottom: composite percentile
+    ax2.axhspan(EXTREME_HIGH_PCT * 100, 100, color=BAND_BG, zorder=0)
+    ax2.axhspan(0, EXTREME_LOW_PCT * 100, color=BAND_BG_LOW, zorder=0)
+    ax2.axhline(50, color=GRID, linewidth=0.6, linestyle="--", alpha=0.5)
+
+    line_color = (
+        BEAR if state.zone == "EXTREME_HIGH" else
+        BULL if state.zone == "EXTREME_LOW" else
+        NEUTRAL
+    )
+    ax2.plot(pct.index, pct.values, color=line_color, linewidth=1.5)
+    ax2.fill_between(pct.index, 50, pct.values,
+                      where=(pct.values >= 50), color=BEAR, alpha=0.10, interpolate=True)
+    ax2.fill_between(pct.index, 50, pct.values,
+                      where=(pct.values < 50), color=BULL, alpha=0.10, interpolate=True)
+
+    # Current marker + annotation
+    ax2.scatter([pct.index[-1]], [pct.iloc[-1]], color=line_color, s=60, zorder=5,
+                edgecolors=FG, linewidths=0.9)
+    current_label = f"current: {pct.iloc[-1]:.0f}th pct · {state.zone}"
+    ax2.text(0.99, 0.92, current_label, transform=ax2.transAxes,
+              color=line_color, fontsize=10, ha="right", va="top",
+              fontweight="bold",
+              bbox=dict(facecolor=BG, edgecolor=line_color, alpha=0.85, pad=4))
+
+    ax2.set_ylim(0, 100)
+    ax2.set_yticks([0, 10, 30, 50, 70, 90, 100])
+    ax2.set_ylabel("Composite percentile", color=FG, fontsize=10)
+    _style_ax(ax2)
+    ax2.xaxis.set_major_locator(mdates.YearLocator(5))
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.text(0.99, 0.005,
+             f"Components: {', '.join(state.components_used)}  ·  Updated {stamp}",
+             ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
+
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=170, facecolor=BG)
+    plt.close(fig)
+    return out_path
+
+
+def plot_composite_decile_returns(out_path: Path) -> Path:
+    """Bar chart of historical 12m SPX forward returns by composite decile."""
+    labels = [d[0] for d in DECILE_STATS]
+    means = [d[2] for d in DECILE_STATS]
+    ns = [d[1] for d in DECILE_STATS]
+    hits = [d[3] for d in DECILE_STATS]
+
+    fig, ax = plt.subplots(figsize=(11, 5.5))
+    fig.patch.set_facecolor(BG)
+
+    colors = [BULL if m > 12 else BEAR if m < 0 else NEUTRAL for m in means]
+    bars = ax.bar(labels, means, color=colors, edgecolor=GRID, alpha=0.9)
+
+    # Annotate each bar with N + hit rate
+    for bar, n, hit, m in zip(bars, ns, hits, means):
+        y = bar.get_height()
+        offset = 1.5 if y >= 0 else -1.5
+        va = "bottom" if y >= 0 else "top"
+        ax.text(bar.get_x() + bar.get_width() / 2, y + offset,
+                f"N={n}\n{hit}% pos",
+                color=FG, ha="center", va=va, fontsize=8, alpha=0.9)
+
+    ax.axhline(9.6, color=FG, linewidth=0.8, linestyle="--", alpha=0.6,
+                label="Full-sample baseline +9.6%")
+    ax.set_ylabel("12-month SPX forward return (%)", color=FG, fontsize=10)
+    ax.set_title("Historical 12-month SPX forward returns by composite percentile decile",
+                  color=FG, fontsize=12, fontweight="bold", pad=10, loc="left")
+    leg = ax.legend(loc="upper right", facecolor=BG, edgecolor=GRID, labelcolor=FG)
+    for txt in leg.get_texts():
+        txt.set_color(FG)
+    _style_ax(ax)
+    ax.set_ylim(-25, 45)
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.text(0.99, 0.005, f"Source: research/6_composite.py  ·  Updated {stamp}",
              ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
 
     plt.tight_layout()

@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from .signals import Signal
+from .composite import CompositeState
 
 
 def _pp(x: float, dp: int = 1) -> str:
@@ -68,6 +69,24 @@ def signal_table_en(snap: dict, signals: dict[str, Signal]) -> str:
             f"| {sig.short_name} | {val_display} | {pct_display} | "
             f"{r['zone']} {zone_marker} | {tier_display} | {effect} |"
         )
+    return "\n".join(lines)
+
+
+def composite_block_en(state: CompositeState) -> str:
+    arrow = (
+        "**↓ BOTTOM-LEANING**" if state.zone == "EXTREME_LOW" else
+        "**↑ TOP-LEANING**" if state.zone == "EXTREME_HIGH" else
+        "**~ MID**"
+    )
+    lines = [
+        f"Composite value: `{state.current_value:+.3f}`  ·  "
+        f"Composite percentile: `{state.current_percentile*100:.0f}%`  ·  "
+        f"Zone: **{state.zone}** ({arrow})",
+        "",
+        f"_{state.zone_label}_",
+        "",
+        f"Built from {state.n_components} components: " + ", ".join(state.components_used) + ".",
+    ]
     return "\n".join(lines)
 
 
@@ -143,6 +162,24 @@ def signal_table_zh(snap: dict, signals: dict[str, Signal]) -> str:
     return "\n".join(lines)
 
 
+def composite_block_zh(state: CompositeState) -> str:
+    arrow = (
+        "**↓ 偏底部**" if state.zone == "EXTREME_LOW" else
+        "**↑ 偏顶部**" if state.zone == "EXTREME_HIGH" else
+        "**~ 中性**"
+    )
+    lines = [
+        f"复合指标当前值: `{state.current_value:+.3f}`  ·  "
+        f"复合指标百分位: `{state.current_percentile*100:.0f}%`  ·  "
+        f"区间: **{state.zone}** ({arrow})",
+        "",
+        f"_{state.zone_label_zh}_",
+        "",
+        f"由 {state.n_components} 个组件构成：" + "、".join(state.components_used) + "。",
+    ]
+    return "\n".join(lines)
+
+
 def stamp_text_zh(snap: dict) -> str:
     return f"_最后更新：**{snap['captured_utc']}**  ·  数据源：FRED · Yahoo Finance · FINRA_"
 
@@ -155,14 +192,24 @@ def replace_marker(text: str, marker: str, new_content: str) -> str:
     return re.sub(pattern, replacement, text, flags=re.DOTALL)
 
 
-def render_readme(readme_path: Path, snap: dict, signals: dict[str, Signal], lang: str = "en") -> None:
+def render_readme(
+    readme_path: Path,
+    snap: dict,
+    signals: dict[str, Signal],
+    composite_state: CompositeState | None = None,
+    lang: str = "en",
+) -> None:
     text = readme_path.read_text(encoding="utf-8")
     if lang == "zh":
         text = replace_marker(text, "STAMP", stamp_text_zh(snap))
         text = replace_marker(text, "HEADLINE", headline_zh(snap))
         text = replace_marker(text, "SIGNAL_TABLE", signal_table_zh(snap, signals))
+        if composite_state is not None:
+            text = replace_marker(text, "COMPOSITE", composite_block_zh(composite_state))
     else:
         text = replace_marker(text, "STAMP", stamp_text_en(snap))
         text = replace_marker(text, "HEADLINE", headline_en(snap))
         text = replace_marker(text, "SIGNAL_TABLE", signal_table_en(snap, signals))
+        if composite_state is not None:
+            text = replace_marker(text, "COMPOSITE", composite_block_en(composite_state))
     readme_path.write_text(text, encoding="utf-8")

@@ -180,6 +180,8 @@ def build_all() -> dict[str, Signal]:
     ndx = _fetch_yahoo("^NDX")
     print("Fetching SOX (Yahoo ^SOX)...")
     sox = _fetch_yahoo("^SOX")
+    print("Fetching Russell 2000 (Yahoo ^RUT)...")
+    rut = _fetch_yahoo("^RUT")
     print("Fetching Wilshire 5000 (Yahoo ^W5000)...")
     wilshire = _fetch_yahoo("^W5000")
 
@@ -242,6 +244,25 @@ def build_all() -> dict[str, Signal]:
         n_low=33,
         n_high=41,
         higher_is_riskier=False,
+    )
+
+    # RUT_SPX_RS — Tier 3 standalone but used as composite component
+    rut_me = _to_month_end(rut)
+    df = pd.concat({"a": rut_me, "b": gspc_me}, axis=1).dropna()
+    rut_rs = (df["a"] / df["b"]).pct_change(3) * 100
+    signals["RUT_SPX_RS"] = Signal(
+        name="RUT_SPX_RS",
+        short_name="Russell 2000 vs SPX 3m RS",
+        description="3-month rate-of-change in Russell 2000 / SPX ratio - small-cap risk appetite. Standalone regime-dependent, used in composite.",
+        category="leadership",
+        series=rut_rs.dropna(),
+        tier_low="REGIME-DEP",
+        tier_high="REGIME-DEP",
+        effect_low_pp=+5.9,
+        effect_high_pp=-5.1,
+        n_low=75,
+        n_high=60,
+        higher_is_riskier=True,
     )
 
     # MCAP_M2 — TOMBSTONE: failed stability test, shown for reference

@@ -20,6 +20,7 @@ import pandas as pd
 from monitor import signals as sig_mod
 from monitor import plots
 from monitor import render
+from monitor import composite as comp_mod
 
 ROOT = Path(__file__).resolve().parent
 CHARTS = ROOT / "charts"
@@ -99,6 +100,13 @@ def main() -> int:
     print(f"  Durable triggered (bear/bull): {len(snap['triggered_durable_bear'])}/{len(snap['triggered_durable_bull'])}")
     print(f"  Mostly triggered (bear/bull):  {len(snap['triggered_mostly_bear'])}/{len(snap['triggered_mostly_bull'])}")
 
+    print("\nBuilding composite cycle indicator...")
+    composite_state = comp_mod.build_composite_series(signals)
+    print(f"  composite value: {composite_state.current_value:+.3f}")
+    print(f"  composite pct:   {composite_state.current_percentile*100:.1f}%")
+    print(f"  composite zone:  {composite_state.zone}")
+    print(f"  components used: {composite_state.components_used}")
+
     print("\nRendering charts...")
     p1 = plots.plot_overview(signals, spx, CHARTS / "overview.png")
     print(f"  wrote {p1}")
@@ -106,13 +114,21 @@ def main() -> int:
     p2 = plots.plot_conditional_returns(cond_rows, full_sample_mean_pct=10.0,
                                          out_path=CHARTS / "conditional_returns.png")
     print(f"  wrote {p2}")
+    p3 = plots.plot_composite(composite_state, spx, CHARTS / "composite.png")
+    print(f"  wrote {p3}")
+    p4 = plots.plot_composite_decile_returns(CHARTS / "composite_deciles.png")
+    print(f"  wrote {p4}")
 
     print("\nUpdating READMEs + saving snapshot...")
-    render.render_readme(README, snap, signals, lang="en")
+    render.render_readme(README, snap, signals, composite_state, lang="en")
     readme_zh = ROOT / "README.zh-CN.md"
     if readme_zh.exists():
-        render.render_readme(readme_zh, snap, signals, lang="zh")
+        render.render_readme(readme_zh, snap, signals, composite_state, lang="zh")
     save_snapshot(snap)
+
+    # Also persist composite series to disk
+    composite_state.series.to_frame("composite").to_csv(DATA / "composite.csv",
+                                                          index_label="date")
 
     print("\nCurrent state (production signals):")
     for r in snap["rows"]:

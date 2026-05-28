@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-27 23:22 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 05:07 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -19,6 +19,39 @@ _Last updated: **2026-05-27 23:22 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 
 ![Signal percentile rank with extreme bands](charts/overview.png)
 
+## Composite cycle indicator
+
+A weighted combination of the validated signals, designed as a medium-term (swing) auxiliary read of where the market sits in its macro cycle. Extreme percentiles (top/bottom decile of the composite's own history) historically carry significant 12-month forward-return effects; the mid range is honestly inconclusive.
+
+<!-- BEGIN:COMPOSITE -->
+Composite value: `-0.001`  ·  Composite percentile: `44%`  ·  Zone: **MID** (**~ MID**)
+
+_MID (inconclusive)_
+
+Built from 4 components: MARGIN_M2, NDX_SPX_RS, SOX_SPX_RS, RUT_SPX_RS.
+<!-- END:COMPOSITE -->
+
+![Composite cycle indicator over time](charts/composite.png)
+
+Historical 12-month SPX forward return by composite decile — both extreme deciles are statistically significant (bootstrap p < 0.001):
+
+![Composite decile forward returns](charts/composite_deciles.png)
+
+| Composite decile | N | 12m fwd SPX mean | Hit rate | vs. full-sample |
+|---|---:|---:|---:|---:|
+| **0-10% (extreme low / bottom setup)** | 14 | **+31.6%** | **100%** | **+22.0pp** |
+| 10-30% (low / leaning setup) | 52 | +17.3% | 85% | +7.6pp |
+| 30-50% (mid-low) | 71 | +10.0% | 83% | +0.3pp |
+| 50-70% (mid-high) | 85 | +10.4% | 84% | +0.7pp |
+| 70-90% (high / leaning warning) | 109 | +6.7% | 73% | -2.9pp |
+| **90-100% (extreme high / top warning)** | 24 | **-10.1%** | **29%** | **-19.7pp** |
+
+How to read the composite:
+- Treat the **mid range (30-70%)** as inconclusive. Don't trade off a 50th-percentile composite reading.
+- **Extreme low (≤10%)** has historically been a strong bottom-leaning setup — the small N=14 is honest, but every single one was followed by a positive 12-month return.
+- **Extreme high (≥90%)** has historically been a top-leaning warning — 29% hit rate and -10% average forward return.
+- This is auxiliary judgment, not a trading trigger. Use it to size discretionary positioning, not to flip on a single reading.
+
 ## Signal table
 
 <!-- BEGIN:SIGNAL_TABLE -->
@@ -28,6 +61,7 @@ _Last updated: **2026-05-27 23:22 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 | NDX vs SPX 3m RS | 9.843 | 92% | HIGH [BULL] | MOSTLY | +4.8pp |
 | SOX vs SPX 3m RS | 43.470 | 99% | HIGH [BULL] | MOSTLY | +4.2pp |
 | Market cap / M2 (Buffett indicator variant) | 3.160 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
+| Russell 2000 vs SPX 3m RS | 1.463 | 64% | MID [mid] | — | — |
 <!-- END:SIGNAL_TABLE -->
 
 Zone marker decodes to historical bias when this signal is in this zone — not a recommendation. See `research/findings.md` for the audit trail and limitations of each signal.

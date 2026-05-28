@@ -85,6 +85,36 @@ This is not a clean call. It is a mixed-evidence regime where the most reliable 
 
 This is the honest version. We're not selling a strategy. We're showing what the data actually says about extreme-state forward returns.
 
+## v2 — composite cycle indicator (2026-05-28)
+
+Combined the 4 leadership / leverage signals (MARGIN_M2, NDX_SPX_RS, SOX_SPX_RS, RUT_SPX_RS) into a weighted composite, sign-aligned so that higher composite = more top-warning. Reporting-lag tolerant via 3-month forward fill on individual components, with proportional reweighting when components drop out.
+
+**Validation results** (12-month forward SPX return, 1990-2026, N=355):
+
+| Composite decile | N | Mean | Hit rate | vs. baseline |
+|---|---:|---:|---:|---:|
+| 0-10% (extreme low) | 14 | **+31.6%** | **100%** | +22.0pp |
+| 10-30% | 52 | +17.3% | 85% | +7.6pp |
+| 30-50% | 71 | +10.0% | 83% | +0.3pp |
+| 50-70% | 85 | +10.4% | 84% | +0.7pp |
+| 70-90% | 109 | +6.7% | 73% | -2.9pp |
+| 90-100% (extreme high) | 24 | **-10.1%** | **29%** | -19.7pp |
+
+Bootstrap p-value for both extreme deciles vs. full sample: **p<0.001**.
+
+**Per-decade stability of the composite extremes**:
+- 1990s: extremes rare (bull market dominated), small effects
+- 2000s: huge effects in both directions (top -18.1pp, bot +48.7pp from one observation)
+- 2010s: minimal extreme observations (markets compressed)
+- 2020s: top -1.2pp, bot +19.1pp — consistent direction with smaller magnitude
+
+**Why this works when individual signals don't always**: the composite captures the *coincidence* of multiple stretched readings. Any single signal can be regime-dependent or have small N at its extreme, but when 3 of 4 components agree (e.g., extreme leverage + leadership rolling over), the historical base rate of bad forward returns is robust.
+
+**What the composite is honest about**:
+- Mid range (30-70%) is genuinely inconclusive. Don't trade off a 50th-percentile reading.
+- The bottom-decile N=14 is small. Every single one was followed by positive 12m return historically, but base rates can change.
+- The composite is for swing-scale auxiliary judgment, not a short-term timing tool.
+
 ## Open questions
 
 1. **Quintile thresholds vs decile**: should we test top-20% / bottom-20% to get more samples in extreme zones, particularly for the MARGIN_M2 and SOX_SPX_RS signals that have small N?
