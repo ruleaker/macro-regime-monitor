@@ -227,22 +227,57 @@ def plot_composite_decile_returns(out_path: Path) -> Path:
     return out_path
 
 
-def plot_liquidity_trends(states: dict, out_path: Path) -> Path:
-    """5-panel chart: SuperTrend on each macro variable with flip markers + direction shading."""
+def plot_liquidity_trends(states: dict, spx: pd.Series, out_path: Path) -> Path:
+    """Multi-panel chart: SPX reference on top + SuperTrend per macro variable below.
+
+    Designed so the reader can visually trace each liquidity inflection across
+    to its SPX consequence: 2008 GFC, 2020 COVID easing, 2022 QT, etc.
+    """
     items = [(name, st) for name, st in states.items() if not pd.isna(st.current_value)]
     n = len(items)
     if n == 0:
         return out_path
 
-    fig, axes = plt.subplots(n, 1, figsize=(12, 1.7 * n), sharex=True)
-    if n == 1:
-        axes = [axes]
-    fig.patch.set_facecolor(BG)
-
-    # Earliest start across all series
     start_date = pd.Timestamp("2005-01-01")
 
-    for ax, (name, st) in zip(axes, items):
+    # Total panels: SPX + each macro variable
+    n_panels = n + 1
+    fig, axes = plt.subplots(n_panels, 1, figsize=(12, 1.7 * n_panels), sharex=True,
+                              gridspec_kw={"height_ratios": [2.0] + [1.0] * n})
+    fig.patch.set_facecolor(BG)
+
+    # ---- Top panel: SPX log scale ----
+    ax_spx = axes[0]
+    spx_clip = spx[spx.index >= start_date]
+    ax_spx.plot(spx_clip.index, spx_clip.values, color=ACCENT, linewidth=1.4)
+    ax_spx.set_yscale("log")
+    ax_spx.set_ylabel("SPX (log)", color=ACCENT, fontsize=10)
+    _style_ax(ax_spx)
+
+    # Mark major flip events from each variable on the SPX panel for visual alignment
+    flip_dates_release = set()
+    flip_dates_tighten = set()
+    for _, st in items:
+        st_df = supertrend(st.series.dropna())
+        st_df = st_df[st_df.index >= start_date]
+        flips = st_df[st_df["flip"]]
+        for fd, row in flips.iterrows():
+            is_release_flip = ((row["direction"] == 1 and st.higher_means_release) or
+                                (row["direction"] == -1 and not st.higher_means_release))
+            if is_release_flip:
+                flip_dates_release.add(fd)
+            else:
+                flip_dates_tighten.add(fd)
+    for fd in flip_dates_release:
+        ax_spx.axvline(fd, color=BULL, alpha=0.15, linewidth=1.2)
+    for fd in flip_dates_tighten:
+        ax_spx.axvline(fd, color=BEAR, alpha=0.15, linewidth=1.2)
+
+    ax_spx.set_title("Liquidity Trend Panel — macro variables vs. SPX (visual alignment)",
+                      color=FG, fontsize=13, fontweight="bold", pad=12, loc="left")
+
+    # ---- Variable panels ----
+    for ax, (name, st) in zip(axes[1:], items):
         st_df = supertrend(st.series.dropna())
         st_df = st_df[st_df.index >= start_date]
         if st_df.empty:
@@ -253,15 +288,12 @@ def plot_liquidity_trends(states: dict, out_path: Path) -> Path:
             d = st_df["direction"].iloc[i]
             if d == 0:
                 continue
-            # Color by liquidity meaning
             is_release = (d == 1 and st.higher_means_release) or (d == -1 and not st.higher_means_release)
             color = BAND_BG_LOW if is_release else BAND_BG
             ax.axvspan(st_df.index[i - 1], st_df.index[i], color=color, zorder=0)
 
-        # Value line
         ax.plot(st_df.index, st_df["value"], color=FG, linewidth=1.3)
 
-        # Flip markers
         flips = st_df[st_df["flip"]]
         for flip_date, row in flips.iterrows():
             is_release_flip = ((row["direction"] == 1 and st.higher_means_release) or
@@ -270,7 +302,6 @@ def plot_liquidity_trends(states: dict, out_path: Path) -> Path:
             ax.scatter([flip_date], [row["value"]], color=marker_color,
                         s=35, zorder=5, edgecolors=FG, linewidths=0.8)
 
-        # Right-side current state label
         impl_color = BULL if st.liquidity_implication == "release" else BEAR if st.liquidity_implication == "tighten" else NEUTRAL
         age_str = f" · {st.months_since_flip:.0f}m" if st.months_since_flip and st.months_since_flip < 200 else ""
         label = f"{'↑' if st.direction == 1 else '↓' if st.direction == -1 else '—'} {st.liquidity_implication}{age_str}"
@@ -284,12 +315,10 @@ def plot_liquidity_trends(states: dict, out_path: Path) -> Path:
 
     axes[-1].xaxis.set_major_locator(mdates.YearLocator(2))
     axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
-    axes[0].set_title("Liquidity Trend Panel — SuperTrend(10, 2.0) direction per macro variable",
-                       color=FG, fontsize=13, fontweight="bold", pad=12, loc="left")
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     fig.text(0.99, 0.005,
-              f"Green = liquidity-release direction  ·  Red = liquidity-tightening direction  ·  Updated {stamp}",
+              f"Green vlines = liquidity-release flips  ·  Red vlines = tightening flips  ·  Updated {stamp}",
               ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
 
     plt.tight_layout()

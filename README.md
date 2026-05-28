@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-28 05:49 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 05:52 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -68,7 +68,7 @@ Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.
 | Net Liquidity (NETLIQ) | ↑ UP | 5.881 | 2026-05 | 0.0m | 🟢 RELEASE |
 | M2 Money Supply (M2_LEVEL) | ↑ UP | 22,804 | 2024-02 | 26.0m | 🟢 RELEASE |
 | 10Y Treasury Yield (DGS10) | ↑ UP | 4.488 | 2026-04 | 1.0m | 🔴 TIGHTEN |
-| US Dollar Index (DXY) | ↓ DOWN | 99.435 | 2025-03 | 14.0m | 🟢 RELEASE |
+| US Dollar Index (DXY) | ↓ DOWN | 99.429 | 2025-03 | 14.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)

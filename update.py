@@ -127,7 +127,7 @@ def main() -> int:
     trend_score = trend_mod.liquidity_flow_score(trend_states)
     print(f"  trend score: {trend_score['score']:+d}/{trend_score['n_total']} "
           f"(release: {trend_score['release_count']}, tighten: {trend_score['tighten_count']})")
-    p6 = plots.plot_liquidity_trends(trend_states, CHARTS / "liquidity_trends.png")
+    p6 = plots.plot_liquidity_trends(trend_states, spx, CHARTS / "liquidity_trends.png")
     print(f"  wrote {p6}")
 
     print("\nUpdating READMEs + saving snapshot...")
