@@ -14,6 +14,7 @@ import pandas as pd
 from .signals import Signal
 from .composite import CompositeState
 from .trend import TrendState
+from .predictive import PredictiveSignal
 
 
 def _pp(x: float, dp: int = 1) -> str:
@@ -88,6 +89,62 @@ def composite_block_en(state: CompositeState) -> str:
         "",
         f"Built from {state.n_components} components: " + ", ".join(state.components_used) + ".",
     ]
+    return "\n".join(lines)
+
+
+def predictive_block_en(signals: dict, score: dict) -> str:
+    regime_label = {
+        "PEAK_WARNING": "**🔴 PEAK WARNING** — historical pre-peak pattern present",
+        "TROUGH_SETUP": "**🟢 TROUGH SETUP / no peak warning** — leading signals constructive",
+        "MIXED": "**⚪ MIXED** — no clear leading-signal pattern",
+    }
+    lines = [
+        f"**Warning count: {score['warning_count']}/{score['n_total']} signals in warning direction**",
+        "",
+        regime_label.get(score["regime"], "—"),
+        "",
+        "| Signal | Direction | Peak detection | Peak lead | Trough detection | Trough lead |",
+        "|---|:-:|:-:|:-:|:-:|:-:|",
+    ]
+    for name, s in signals.items():
+        dir_str = "🔴 WARNING" if s.current_direction == 1 else "🟢 SETUP" if s.current_direction == -1 else "⚪ neutral"
+        lines.append(
+            f"| {s.short_name} | {dir_str} | "
+            f"{s.peak_detection_rate} | {s.peak_avg_lead_m:+.1f}m | "
+            f"{s.trough_detection_rate} | {s.trough_avg_lead_m:+.1f}m |"
+        )
+    return "\n".join(lines)
+
+
+def predictive_block_zh(signals: dict, score: dict) -> str:
+    regime_label = {
+        "PEAK_WARNING": "**🔴 PEAK WARNING** — 历史 SPX 顶部前 leading 信号配置",
+        "TROUGH_SETUP": "**🟢 TROUGH SETUP / 无 peak warning** — leading 信号偏多",
+        "MIXED": "**⚪ 混合** — leading 信号没有清晰方向",
+    }
+    zh_name = {
+        "YC_TREND": "收益率曲线趋势 (10Y−3M)",
+        "NDX_RS_6M_TREND": "纳指 vs 标普 6月相对强度趋势",
+        "SOX_RS_6M_TREND": "费城半导体 vs 标普 6月相对强度",
+        "DXY_TREND": "DXY 6月变化趋势",
+        "RUT_RS_BLOWOFF": "Russell 2000 blow-off 探测器",
+    }
+    lines = [
+        f"**Warning 计数: {score['warning_count']}/{score['n_total']} 信号在警告方向**",
+        "",
+        regime_label.get(score["regime"], "—"),
+        "",
+        "| 信号 | 当前方向 | Peak 检测率 | Peak 提前量 | Trough 检测率 | Trough 提前量 |",
+        "|---|:-:|:-:|:-:|:-:|:-:|",
+    ]
+    for name, s in signals.items():
+        dir_str = "🔴 警告" if s.current_direction == 1 else "🟢 setup" if s.current_direction == -1 else "⚪ 中性"
+        display_name = zh_name.get(name, s.short_name)
+        lines.append(
+            f"| {display_name} | {dir_str} | "
+            f"{s.peak_detection_rate} | {s.peak_avg_lead_m:+.1f}m | "
+            f"{s.trough_detection_rate} | {s.trough_avg_lead_m:+.1f}m |"
+        )
     return "\n".join(lines)
 
 
@@ -258,6 +315,8 @@ def render_readme(
     composite_state: CompositeState | None = None,
     trend_states: dict | None = None,
     trend_score: dict | None = None,
+    pred_signals: dict | None = None,
+    pred_score: dict | None = None,
     lang: str = "en",
 ) -> None:
     text = readme_path.read_text(encoding="utf-8")
@@ -269,6 +328,8 @@ def render_readme(
             text = replace_marker(text, "COMPOSITE", composite_block_zh(composite_state))
         if trend_states is not None and trend_score is not None:
             text = replace_marker(text, "TREND_PANEL", trend_block_zh(trend_states, trend_score))
+        if pred_signals is not None and pred_score is not None:
+            text = replace_marker(text, "PREDICTIVE", predictive_block_zh(pred_signals, pred_score))
     else:
         text = replace_marker(text, "STAMP", stamp_text_en(snap))
         text = replace_marker(text, "HEADLINE", headline_en(snap))
@@ -277,4 +338,6 @@ def render_readme(
             text = replace_marker(text, "COMPOSITE", composite_block_en(composite_state))
         if trend_states is not None and trend_score is not None:
             text = replace_marker(text, "TREND_PANEL", trend_block_en(trend_states, trend_score))
+        if pred_signals is not None and pred_score is not None:
+            text = replace_marker(text, "PREDICTIVE", predictive_block_en(pred_signals, pred_score))
     readme_path.write_text(text, encoding="utf-8")

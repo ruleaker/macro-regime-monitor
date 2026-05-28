@@ -22,6 +22,7 @@ from monitor import plots
 from monitor import render
 from monitor import composite as comp_mod
 from monitor import trend as trend_mod
+from monitor import predictive as pred_mod
 
 ROOT = Path(__file__).resolve().parent
 CHARTS = ROOT / "charts"
@@ -130,13 +131,23 @@ def main() -> int:
     p6 = plots.plot_liquidity_trends(trend_states, spx, CHARTS / "liquidity_trends.png")
     print(f"  wrote {p6}")
 
+    print("\nBuilding predictive leading signals panel...")
+    pred_signals = pred_mod.build_predictive_signals()
+    pred_score = pred_mod.warning_score(pred_signals)
+    print(f"  warning score: {pred_score['warning_count']}/{pred_score['n_total']} warning, "
+          f"{pred_score['setup_count']}/{pred_score['n_total']} setup, regime={pred_score['regime']}")
+    p7 = plots.plot_predictive_signals(pred_signals, spx, CHARTS / "predictive_signals.png")
+    print(f"  wrote {p7}")
+
     print("\nUpdating READMEs + saving snapshot...")
     render.render_readme(README, snap, signals, composite_state,
-                          trend_states=trend_states, trend_score=trend_score, lang="en")
+                          trend_states=trend_states, trend_score=trend_score,
+                          pred_signals=pred_signals, pred_score=pred_score, lang="en")
     readme_zh = ROOT / "README.zh-CN.md"
     if readme_zh.exists():
         render.render_readme(readme_zh, snap, signals, composite_state,
-                              trend_states=trend_states, trend_score=trend_score, lang="zh")
+                              trend_states=trend_states, trend_score=trend_score,
+                              pred_signals=pred_signals, pred_score=pred_score, lang="zh")
     save_snapshot(snap)
 
     # Also persist composite series to disk

@@ -23,6 +23,7 @@ import pandas as pd
 from .signals import Signal, QUINTILE_LOW, QUINTILE_HIGH
 from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS, DRAWDOWN_STATS
 from .trend import TrendState, supertrend, apply_smoothing, VARIABLES as TREND_VARS
+from .predictive import PredictiveSignal, SPX_PEAKS_HIST, SPX_TROUGHS_HIST
 
 BG = "#0d1117"
 FG = "#e6edf3"
@@ -323,6 +324,93 @@ def plot_liquidity_trends(states: dict, spx: pd.Series, out_path: Path) -> Path:
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     fig.text(0.99, 0.005,
               f"Green vlines = liquidity-release flips  ·  Red vlines = tightening flips  ·  Updated {stamp}",
+              ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
+
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=170, facecolor=BG)
+    plt.close(fig)
+    return out_path
+
+
+def plot_predictive_signals(signals: dict, spx: pd.Series, out_path: Path) -> Path:
+    """SPX + 5 validated leading signals with direction shading.
+
+    Each signal's direction series is shaded (red=warning / green=setup) on
+    its own panel. SPX top panel has historical peaks/troughs marked.
+    """
+    items = list(signals.items())
+    n = len(items)
+    if n == 0:
+        return out_path
+
+    fig, axes = plt.subplots(n + 1, 1, figsize=(12, 1.5 * (n + 1)), sharex=True,
+                              gridspec_kw={"height_ratios": [2.0] + [1.0] * n})
+    fig.patch.set_facecolor(BG)
+    start_date = pd.Timestamp("2000-01-01")
+
+    # Top panel: SPX
+    ax_spx = axes[0]
+    spx_clip = spx[spx.index >= start_date]
+    ax_spx.plot(spx_clip.index, spx_clip.values, color=ACCENT, linewidth=1.4)
+    ax_spx.set_yscale("log")
+    ax_spx.set_ylabel("SPX (log)", color=ACCENT, fontsize=10)
+    _style_ax(ax_spx)
+
+    # Mark historical peaks/troughs on SPX
+    for label, d in SPX_PEAKS_HIST.items():
+        ax_spx.axvline(d, color=BEAR, alpha=0.5, linewidth=1.0, linestyle="--")
+        ax_spx.text(d, ax_spx.get_ylim()[1] * 0.96, label.split("_")[1] if "_" in label else label,
+                     color=BEAR, fontsize=7, ha="center", va="top", rotation=0, alpha=0.85)
+    for label, d in SPX_TROUGHS_HIST.items():
+        ax_spx.axvline(d, color=BULL, alpha=0.5, linewidth=1.0, linestyle="--")
+
+    ax_spx.set_title("Predictive Leading Signals — validated 6-9 month lead time on SPX peaks/troughs",
+                      color=FG, fontsize=13, fontweight="bold", pad=12, loc="left")
+
+    # Signal panels
+    for ax, (name, sig) in zip(axes[1:], items):
+        # Plot underlying series
+        s = sig.series.dropna()
+        s = s[s.index >= start_date]
+        if s.empty:
+            continue
+        ax.plot(s.index, s.values, color=FG, linewidth=1.1)
+
+        # Direction shading
+        d_series = sig.direction_series.dropna()
+        d_series = d_series[d_series.index >= start_date]
+        for i in range(1, len(d_series)):
+            dval = d_series.iloc[i]
+            if dval == +1:
+                ax.axvspan(d_series.index[i - 1], d_series.index[i], color=BAND_BG, zorder=0)
+            elif dval == -1:
+                ax.axvspan(d_series.index[i - 1], d_series.index[i], color=BAND_BG_LOW, zorder=0)
+
+        # Current state label
+        if sig.current_direction == +1:
+            color = BEAR
+            label = f"⚠ WARNING · lead {sig.peak_avg_lead_m:+.0f}m"
+        elif sig.current_direction == -1:
+            color = BULL
+            label = f"✓ SETUP · trough lead {sig.trough_avg_lead_m:+.0f}m"
+        else:
+            color = NEUTRAL
+            label = "— neutral"
+        ax.text(0.99, 0.5, label, transform=ax.transAxes,
+                color=color, fontsize=9, ha="right", va="center",
+                fontweight="bold",
+                bbox=dict(facecolor=BG, edgecolor=color, alpha=0.85, pad=4))
+
+        ax.set_ylabel(name.replace("_TREND", "").replace("_RS_6M", " RS6m").replace("_BLOWOFF", "_blow"),
+                      color=FG, fontsize=8)
+        _style_ax(ax)
+
+    axes[-1].xaxis.set_major_locator(mdates.YearLocator(3))
+    axes[-1].xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.text(0.99, 0.005,
+              f"Dashed red lines = historical SPX peaks  ·  Dashed green = troughs  ·  Updated {stamp}",
               ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
 
     plt.tight_layout()

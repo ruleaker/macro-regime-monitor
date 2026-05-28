@@ -5,7 +5,7 @@
 > 追踪一组精选的流动性、估值、市场内部信号相对其历史极端区间的位置。每日通过 GitHub Actions 更新。**不是交易策略，是一份关于"我们现在在哪"的描述性视图。**
 
 <!-- BEGIN:STAMP -->
-_最后更新：**2026-05-28 06:01 UTC**  ·  数据源：FRED · Yahoo Finance · FINRA_
+_最后更新：**2026-05-28 06:12 UTC**  ·  数据源：FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## 当前状态
@@ -52,6 +52,33 @@ _中性区（信号不明确）_
 - **极高区（≥90%）历史上是顶部警告信号**——胜率 29%，平均前瞻收益 −10%。
 - 这是**辅助判断**，不是交易触发器。用它来调整 discretionary 仓位，而不是凭单次读数翻转方向。
 
+## 预测性 Leading Signals 面板
+
+跟下面的"流动性趋势面板"（regime classifier，Fed 通常是跟随市场而不是预测）不同，本面板追踪**历史上平均提前 6-9 个月反映 SPX 顶部/底部**的信号。在 `research/14_lead_lag.py` 里用 5 个历史 SPX 顶（2000、2007、2018、2020、2022）+ 5 个底验证过。
+
+<!-- BEGIN:PREDICTIVE -->
+**Warning 计数: 1/5 信号在警告方向**
+
+**🟢 TROUGH SETUP / 无 peak warning** — leading 信号偏多
+
+| 信号 | 当前方向 | Peak 检测率 | Peak 提前量 | Trough 检测率 | Trough 提前量 |
+|---|:-:|:-:|:-:|:-:|:-:|
+| 收益率曲线趋势 (10Y−3M) | 🟢 setup | 5/5 | -8.4m | 4/5 | -9.2m |
+| 纳指 vs 标普 6月相对强度趋势 | 🟢 setup | 5/5 | -8.4m | 4/5 | -6.2m |
+| 费城半导体 vs 标普 6月相对强度 | 🟢 setup | 4/5 | -8.3m | 4/5 | -7.3m |
+| DXY 6月变化趋势 | 🔴 警告 | 4/5 | -8.5m | 5/5 | -5.0m |
+| Russell 2000 blow-off 探测器 | ⚪ 中性 | 3/5 | -6.3m | 5/5 | -3.4m |
+<!-- END:PREDICTIVE -->
+
+![预测性 Leading Signals](charts/predictive_signals.png)
+
+如何使用：
+- 每个信号都有明确的 **Peak 检测率**（如 5/5 = 历史 5 个 SPX 顶全部抓到）和 **平均提前量**（负值 = peak 之前已经翻红）
+- **YC_TREND** 和 **NDX_RS_6M_TREND** 最强—— 5/5 peak 检测率，平均提前 8.4 个月
+- **警告计数 ≥ 3** = 历史 SPX 顶部前的信号配置模式出现
+- **Setup 计数 ≥ 3** = 历史 SPX 底部前的配置，或简单"没有 peak warning"
+- 这是统计规律识别，不是预言。作为 discretionary 仓位判断的一个输入
+
 ## 流动性趋势面板
 
 跟 composite 不同的**更快**视角。Composite 告诉你"现在在周期相对位置"（基于百分位的慢指标）；这个面板告诉你"现在哪些宏观变量正在转向"，对宏观变量用 SuperTrend 识别 regime 拐点——设计目标是在事件发生 1-3 个月内识别。
@@ -68,7 +95,7 @@ _中性区（信号不明确）_
 | Net Liquidity (Fed BS − TGA − RRP) | ↓ 下行 | 5.881 | 2024-09 | 20.0m | 🔴 紧缩 |
 | M2 12-month growth | ↑ 上行 | 4.327 | 2024-08 | 19.9m | 🟢 放水 |
 | 10Y Yield 6m change | ↑ 上行 | 39.435 | 2023-10 | 31.0m | 🔴 紧缩 |
-| DXY 3-month % change | ↓ 下行 | 1.845 | 2025-04 | 13.0m | 🟢 放水 |
+| DXY 3-month % change | ↓ 下行 | 1.855 | 2025-04 | 13.0m | 🟢 放水 |
 <!-- END:TREND_PANEL -->
 
 ![流动性趋势面板](charts/liquidity_trends.png)
