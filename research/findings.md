@@ -262,6 +262,44 @@ Score +3/5 — leans liquidity release:
 
 Net read: 4-vs-1 lean toward release, but DGS10 recently flipping up + WALCL fresh up = "Fed loosening while market reprices growth/inflation expectations". A regime to watch.
 
+## v5.3 — Predictive panel withdrawn after strict forward test (2026-05-28)
+
+User asked the right question: "are those dashed lines actually our predictions?"
+
+They were not. They were hand-labeled historical SPX peaks and troughs, hard-coded in the script. The "5/5 peak detection, -8.4m average lead" framing in V5 had a lookback-bias problem: it asked "given these known peak dates, was the signal in warning state within [-12m, +3m] of each peak?" Any signal that oscillates frequently will hit "in warning" near at least one date in such a wide window — that's noise pretending to be signal.
+
+### The honest test (research/15_strict_forward_test.py)
+
+For each signal flip to warning, ask: did SPX actually have a ≥10% drawdown in the next 12 months? Compute precision (warning → drawdown follows), recall (real drawdown → preceded by warning), and lift (precision / base rate). Base rate is high — 29% of months post-1999 have a ≥10% drawdown in the next 12 months.
+
+| Signal | Flips | Precision | Base rate | Lift | Verdict |
+|---|---:|---:|---:|---:|---|
+| YC_TREND | 10 | 40% | 29% | 1.39x | weak signal |
+| SOX_RS_6M_TREND | 15 | 33% | 29% | 1.16x | no edge |
+| NDX_RS_6M_TREND | 16 | 31% | 29% | 1.09x | no edge |
+| DXY_TREND | 18 | 28% | 29% | 0.97x | no edge |
+| RUT_RS_BLOWOFF | 25 | 28% | 29% | 0.98x | no edge |
+
+Only YC_TREND has a real but weak edge (lift 1.4x means warning flip raises drawdown probability from 29% to 40%). The other four signals are no better than coin flip.
+
+### What we did
+
+Removed the Predictive Leading Signals panel entirely. Kept:
+- `monitor/predictive.py` and `charts/predictive_signals.png` for audit (unused).
+- `research/14_lead_lag.py` (the flawed methodology) and `research/15_strict_forward_test.py` (the honest one).
+- This finding documented as a cautionary tale.
+
+### Lesson learned
+
+A signal that frequently flips direction will appear to "detect" historical peaks if you give it a wide window around each known event date. This is the same statistical trap behind much "market timing" research: cherry-picked events + wide-window windows + uninspected base rates = beautiful results that don't generalize.
+
+The correct test: from the *signal's* perspective (when does it flip?), what happens *next*? Run that test, compare to base rate, report lift. Anything else is exposed to lookback bias.
+
+What survives in the dashboard:
+- The **composite** (regime classifier) has documented decile-conditional 12m returns and drawdown probabilities. These are forward statistics on the composite itself — no cherry-picked events.
+- The **trend panel** is honestly framed as a regime classifier, not a predictor.
+- The **signal table** shows individual signal current state with their stability-tested tier classification.
+
 ## Open questions
 
 1. **Quintile thresholds vs decile**: should we test top-20% / bottom-20% to get more samples in extreme zones, particularly for the MARGIN_M2 and SOX_SPX_RS signals that have small N?

@@ -131,13 +131,12 @@ def main() -> int:
     p6 = plots.plot_liquidity_trends(trend_states, spx, CHARTS / "liquidity_trends.png")
     print(f"  wrote {p6}")
 
-    print("\nBuilding predictive leading signals panel...")
-    pred_signals = pred_mod.build_predictive_signals()
-    pred_score = pred_mod.warning_score(pred_signals)
-    print(f"  warning score: {pred_score['warning_count']}/{pred_score['n_total']} warning, "
-          f"{pred_score['setup_count']}/{pred_score['n_total']} setup, regime={pred_score['regime']}")
-    p7 = plots.plot_predictive_signals(pred_signals, spx, CHARTS / "predictive_signals.png")
-    print(f"  wrote {p7}")
+    # Predictive panel REMOVED in V5.3 — see research/15_strict_forward_test.py:
+    # strict forward-test showed only YC_TREND had weak edge (lift 1.4x),
+    # other 4 signals had no edge above base rate. Original "5/5 peak detection"
+    # was a lookback-bias artifact. Honest answer: no validated predictor.
+    pred_signals = None
+    pred_score = None
 
     print("\nUpdating READMEs + saving snapshot...")
     render.render_readme(README, snap, signals, composite_state,

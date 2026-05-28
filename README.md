@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-28 06:12 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 06:39 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -52,33 +52,6 @@ How to read the composite:
 - **Extreme high (≥90%)** has historically been a top-leaning warning — 29% hit rate and -10% average forward return.
 - This is auxiliary judgment, not a trading trigger. Use it to size discretionary positioning, not to flip on a single reading.
 
-## Predictive Leading Signals
-
-Unlike the Liquidity Trend Panel below (which is a regime classifier — Fed usually reacts to markets, not predicts them), this panel tracks signals that **historically led SPX peaks and troughs by 6-9 months on average**. Validated in `research/14_lead_lag.py` against 5 historical SPX peaks (2000, 2007, 2018, 2020, 2022) and 5 troughs.
-
-<!-- BEGIN:PREDICTIVE -->
-**Warning count: 1/5 signals in warning direction**
-
-**🟢 TROUGH SETUP / no peak warning** — leading signals constructive
-
-| Signal | Direction | Peak detection | Peak lead | Trough detection | Trough lead |
-|---|:-:|:-:|:-:|:-:|:-:|
-| Yield curve (10Y−3M) trend | 🟢 SETUP | 5/5 | -8.4m | 4/5 | -9.2m |
-| NDX/SPX 6m relative strength trend | 🟢 SETUP | 5/5 | -8.4m | 4/5 | -6.2m |
-| SOX/SPX 6m relative strength trend | 🟢 SETUP | 4/5 | -8.3m | 4/5 | -7.3m |
-| DXY 6m %change trend | 🔴 WARNING | 4/5 | -8.5m | 5/5 | -5.0m |
-| Russell/SPX blow-off detector | ⚪ neutral | 3/5 | -6.3m | 5/5 | -3.4m |
-<!-- END:PREDICTIVE -->
-
-![Predictive Leading Signals](charts/predictive_signals.png)
-
-How to read this panel:
-- Each signal has a documented **peak detection rate** (e.g. 5/5 = caught all 5 historical peaks) and **average lead** (negative = flipped to warning BEFORE peak).
-- **YC_TREND** and **NDX_RS_6M_TREND** are the strongest — 5/5 peaks with ~8.4 month average lead.
-- **Warning count ≥ 3** = historical pre-peak pattern is present.
-- **Setup count ≥ 3** = historical pre-trough pattern, OR simply absence of peak warning.
-- This is statistical pattern matching, not prophecy. Use as an input to discretionary judgment about cycle position.
-
 ## Liquidity Trend Panel
 
 A separate, **faster** lens than the composite. The composite tells you "where are we in the cycle" (slow, percentile-based). This panel tells you "what is trending which way right now" using SuperTrend applied to monthly macro variables — designed to detect regime inflections within 1-3 months of the event itself.
@@ -95,7 +68,7 @@ Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.
 | Net Liquidity (NETLIQ) | ↓ DOWN | 5.881 | 2024-09 | 20.0m | 🔴 TIGHTEN |
 | M2 12-month growth (M2_GROWTH) | ↑ UP | 4.327 | 2024-08 | 19.9m | 🟢 RELEASE |
 | 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 39.435 | 2023-10 | 31.0m | 🔴 TIGHTEN |
-| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 1.855 | 2025-04 | 13.0m | 🟢 RELEASE |
+| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 1.804 | 2025-04 | 13.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)
