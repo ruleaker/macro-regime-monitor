@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .signals import Signal, QUINTILE_LOW, QUINTILE_HIGH
-from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS
+from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS, DRAWDOWN_STATS
 
 BG = "#0d1117"
 FG = "#e6edf3"
@@ -222,6 +222,77 @@ def plot_composite_decile_returns(out_path: Path) -> Path:
 
     plt.tight_layout()
     fig.savefig(out_path, dpi=170, facecolor=BG)
+    plt.close(fig)
+    return out_path
+
+
+def plot_drawdown_asymmetry(out_path: Path) -> Path:
+    """Two-panel chart: probability of large drawdown by zone, and CVaR10."""
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5))
+    fig.patch.set_facecolor(BG)
+
+    # Filter to LOW/MID/HIGH (skip FULL baseline reference)
+    rows = [r for r in DRAWDOWN_STATS if r[0] != "FULL"]
+    full = next(r for r in DRAWDOWN_STATS if r[0] == "FULL")
+
+    labels = [r[0] for r in rows]
+    p20 = [r[5] for r in rows]
+    p30 = [r[6] for r in rows]
+
+    # Left panel: probability of large drawdown
+    x = np.arange(len(labels))
+    width = 0.38
+    bars1 = ax1.bar(x - width / 2, p20, width, color=BEAR, alpha=0.55, label="P(drawdown ≤ -20%)")
+    bars2 = ax1.bar(x + width / 2, p30, width, color=BEAR, alpha=1.0, label="P(drawdown ≤ -30%)")
+
+    ax1.axhline(full[5], color=FG, linestyle="--", linewidth=0.8, alpha=0.6,
+                 label=f"Full-sample baseline (P≤-20% = {full[5]:.0f}%)")
+    for bars in (bars1, bars2):
+        for b in bars:
+            h = b.get_height()
+            ax1.text(b.get_x() + b.get_width() / 2, h + 1.5,
+                      f"{h:.0f}%", ha="center", va="bottom",
+                      color=FG, fontsize=9, fontweight="bold")
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(labels, color=FG)
+    ax1.set_ylabel("Probability (%)", color=FG, fontsize=10)
+    ax1.set_title("Probability of large drawdown in next 24 months",
+                   color=FG, fontsize=11, fontweight="bold", pad=10, loc="left")
+    leg = ax1.legend(facecolor=BG, edgecolor=GRID, labelcolor=FG, loc="upper left", fontsize=8)
+    for txt in leg.get_texts():
+        txt.set_color(FG)
+    ax1.set_ylim(0, max(p30) + 20)
+    _style_ax(ax1)
+
+    # Right panel: CVaR10 — average of worst 10% fwd outcomes
+    cvar = [r[7] for r in rows]
+    colors = [BULL if c >= 0 else BEAR if c <= -20 else NEUTRAL for c in cvar]
+    bars = ax2.bar(labels, cvar, color=colors, edgecolor=GRID)
+    ax2.axhline(full[7], color=FG, linestyle="--", linewidth=0.8, alpha=0.6,
+                 label=f"Full-sample CVaR10 = {full[7]:+.1f}%")
+    ax2.axhline(0, color=FG, linewidth=0.6)
+    for b, c in zip(bars, cvar):
+        offset = 1.5 if c >= 0 else -1.5
+        va = "bottom" if c >= 0 else "top"
+        ax2.text(b.get_x() + b.get_width() / 2, c + offset,
+                  f"{c:+.1f}%", ha="center", va=va, color=FG, fontsize=9, fontweight="bold")
+    ax2.set_ylabel("Average return in worst-10% scenarios (%)", color=FG, fontsize=10)
+    ax2.set_title("Tail-risk view (CVaR10) — what the worst 10% looked like",
+                   color=FG, fontsize=11, fontweight="bold", pad=10, loc="left")
+    leg = ax2.legend(facecolor=BG, edgecolor=GRID, labelcolor=FG, loc="upper right", fontsize=8)
+    for txt in leg.get_texts():
+        txt.set_color(FG)
+    _style_ax(ax2)
+
+    fig.suptitle("Composite cycle indicator — drawdown asymmetry by zone",
+                  color=FG, fontsize=13, fontweight="bold", y=1.02)
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    fig.text(0.99, -0.02, f"Source: research/9_drawdown.py  ·  Updated {stamp}",
+              ha="right", va="bottom", color=FG, fontsize=8, alpha=0.7)
+
+    plt.tight_layout()
+    fig.savefig(out_path, dpi=170, facecolor=BG, bbox_inches="tight")
     plt.close(fig)
     return out_path
 

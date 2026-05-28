@@ -5,7 +5,7 @@
 > 追踪一组精选的流动性、估值、市场内部信号相对其历史极端区间的位置。每日通过 GitHub Actions 更新。**不是交易策略，是一份关于"我们现在在哪"的描述性视图。**
 
 <!-- BEGIN:STAMP -->
-_最后更新：**2026-05-28 05:07 UTC**  ·  数据源：FRED · Yahoo Finance · FINRA_
+_最后更新：**2026-05-28 05:24 UTC**  ·  数据源：FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## 当前状态

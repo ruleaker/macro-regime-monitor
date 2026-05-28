@@ -118,6 +118,8 @@ def main() -> int:
     print(f"  wrote {p3}")
     p4 = plots.plot_composite_decile_returns(CHARTS / "composite_deciles.png")
     print(f"  wrote {p4}")
+    p5 = plots.plot_drawdown_asymmetry(CHARTS / "drawdown_asymmetry.png")
+    print(f"  wrote {p5}")
 
     print("\nUpdating READMEs + saving snapshot...")
     render.render_readme(README, snap, signals, composite_state, lang="en")

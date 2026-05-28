@@ -33,6 +33,10 @@ FRED_SERIES = {
     "WTREGEN": "Treasury General Account (weekly, millions)",
     "RRPONTSYD": "Overnight Reverse Repo (daily, billions)",
     "BAMLH0A0HYM2": "HY OAS - ICE BofA US HY Index Option-Adjusted Spread (daily)",
+    "DGS10": "10-Year Treasury Constant Maturity Rate (daily, %)",
+    "DGS3MO": "3-Month Treasury Bill (daily, %)",
+    "T10YIE": "10-Year Breakeven Inflation Rate (daily, %)",
+    "DTWEXBGS": "Trade-Weighted USD Index: Broad Goods & Services (daily, index)",
 }
 
 YAHOO_TICKERS = {
@@ -42,6 +46,8 @@ YAHOO_TICKERS = {
     "^RUT": "Russell 2000",
     "^DJI": "Dow Jones Industrial Average",
     "^W5000": "Wilshire 5000 (Yahoo, since FRED retired WILL5000PRFC)",
+    "DX-Y.NYB": "ICE Dollar Index (DXY, basket vs 6 majors)",
+    "GC=F": "Gold futures (continuous, COMEX)",
 }
 
 

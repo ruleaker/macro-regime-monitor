@@ -45,6 +45,15 @@ DECILE_STATS = [
     ("90-100%", 24,-10.1,  29, -19.7),
 ]
 
+# Fwd 24-month drawdown statistics by composite zone (from research/9_drawdown.py)
+# Tuple: (zone, N, mean_dd_pct, median_dd_pct, p10_dd_pct, p_dd_below_20, p_dd_below_30, cvar10_pct)
+DRAWDOWN_STATS = [
+    ("LOW (0-10%)",     14,   1.9,   1.7,  -7.5,   0,   0,  +8.4),
+    ("MID (10-90%)",   324,  -7.8,  -3.5, -25.3,  14,   7, -13.6),
+    ("HIGH (90-100%)",  28, -23.9, -30.8, -43.6,  64,  50, -37.1),
+    ("FULL",           366,  -8.6,  -3.8, -30.1,  17,  10, -20.2),
+]
+
 
 @dataclass
 class CompositeState:

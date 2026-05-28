@@ -115,6 +115,61 @@ Bootstrap p-value for both extreme deciles vs. full sample: **p<0.001**.
 - The bottom-decile N=14 is small. Every single one was followed by positive 12m return historically, but base rates can change.
 - The composite is for swing-scale auxiliary judgment, not a short-term timing tool.
 
+## v3 — DXY/10Y/Yield Curve deep dive + drawdown analysis (2026-05-28)
+
+Initial premise was to add DXY and 10Y treasury level signals to the composite. Quintile-threshold stability tests killed both as standalone signals (DXY level failed cross-decade stability — dot-com era artifact again; 10Y change was too noisy). User pushed back, asking for deeper exploration. The deeper dive revealed:
+
+### Multi-horizon validation
+
+Yield curve (10Y-3M) finally surfaces at the **36-month horizon**, not 12-month:
+
+| Horizon | YC LOW effect | p-value |
+|---|---:|---:|
+| 12m | +0.2pp | 0.911 (no signal) |
+| 24m | -4.5pp | 0.049 (weak) |
+| 36m | **-17.5pp** | **<0.001** ★ |
+
+The classic "inverted yield curve precedes recession" thesis is real, but the 12-month forward horizon misses it. Recessions hit ~18-24 months after inversion, and the worst SPX drawdown follows in the 24-36 month window. We had filtered yield curve out of the dashboard based on a too-short horizon. Lesson: signal validity depends on the horizon you test at.
+
+### Decile rerun salvaged one signal
+
+`Y10_3M_CHG LOW` (rates dropping fast) at decile threshold became DURABLE: **+8.2pp, p<0.001**, with 4 of 5 decades positive (most recently +24pp in 2020s). Interpretation: rapid yield drops = central-bank easing / crisis response → strong 12m fwd SPX rebounds. Promoted to candidate composite component.
+
+### Cross-asset asymmetry (H4)
+
+When DXY is in extreme zones, SPX and Gold behave very differently:
+
+| DXY zone | 12m fwd SPX | 12m fwd Gold |
+|---|---:|---:|
+| LOW (weak USD) | -7.6pp (p<0.001) | +5.2pp (p=0.013) |
+| HIGH (strong USD) | -21.2pp (p<0.001) | +6.9pp (p=0.089) |
+
+**Both DXY extremes are bad for SPX** (symmetric stress) **but good for Gold** (avoid-USD refuge). This is the "where does money go" answer the user asked for — when DXY regime is extreme, gold absorbs the safe-haven flow.
+
+### Joint extremes (H5)
+
+Combining signals yields a sharper bear regime indicator:
+
+- `MARGIN_M2 HIGH` alone: -13.2pp, 54% hit (N=56)
+- `MARGIN_M2 HIGH ∧ YC LOW`: **-14.1pp, 27% hit (N=11)** — when over-leveraged AND curve inverted, bear odds spike
+
+### Drawdown asymmetry is the real story
+
+When we shift from "mean fwd return" to "fwd 24-month maximum drawdown distribution", the composite extremes show their teeth:
+
+| Zone | N | Mean DD | Median DD | P(DD ≤ -20%) | P(DD ≤ -30%) | CVaR10 |
+|---|---:|---:|---:|---:|---:|---:|
+| LOW (0-10%) | 14 | **+1.9%** | +1.7% | **0%** | **0%** | **+8.4%** |
+| MID | 324 | -7.8% | -3.5% | 14% | 7% | -13.6% |
+| HIGH (90-100%) | 28 | **-23.9%** | **-30.8%** | **64%** | **50%** | **-37.1%** |
+
+This is the dashboard's real value. The asymmetry between zones is starker on the drawdown axis than on the mean-return axis. Avoiding the EXTREME HIGH zone has historically been the single biggest swing-trade edge.
+
+Single-signal drawdown highlights:
+- `SOX_SPX_RS LOW` (semis crashing): N=9, mean DD -24.9%, P(DD ≤ -30%) = 44%. Strongest single bear signal by drawdown depth.
+- `NDX_SPX_RS LOW` (tech rolling over): mean DD -17.1%, P(DD ≤ -20%) = 46%. Confirms tech weakness is a real risk signal.
+- `MARGIN_M2 HIGH`: median DD only -4.9% (small) but p10 DD = -50% — wide dispersion. Sometimes continues (1999, 2021), sometimes catastrophic (2000, 2008).
+
 ## Open questions
 
 1. **Quintile thresholds vs decile**: should we test top-20% / bottom-20% to get more samples in extreme zones, particularly for the MARGIN_M2 and SOX_SPX_RS signals that have small N?
