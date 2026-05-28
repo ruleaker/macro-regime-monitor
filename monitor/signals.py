@@ -184,6 +184,8 @@ def build_all() -> dict[str, Signal]:
     rut = _fetch_yahoo("^RUT")
     print("Fetching Wilshire 5000 (Yahoo ^W5000)...")
     wilshire = _fetch_yahoo("^W5000")
+    print("Fetching 10Y Treasury (FRED DGS10)...")
+    y10 = _fetch_fred("DGS10")
 
     signals: dict[str, Signal] = {}
 
@@ -263,6 +265,25 @@ def build_all() -> dict[str, Signal]:
         n_low=75,
         n_high=60,
         higher_is_riskier=True,
+    )
+
+    # Y10_3M_CHG — Tier 1 DURABLE bull at LOW (rapid rate drops -> SPX +8.2pp)
+    # Validated at decile threshold in research/7_new_signals.py
+    y10_m = _to_month_end(y10, "mean")
+    y10_3m_chg = (y10_m - y10_m.shift(3)) * 100  # convert % to bps
+    signals["Y10_3M_CHG"] = Signal(
+        name="Y10_3M_CHG",
+        short_name="10Y Treasury 3m change",
+        description="3-month change in 10-year Treasury yield (bps). Rapid drops signal central-bank easing or crisis response, historically followed by strong SPX rebounds.",
+        category="rates",
+        series=y10_3m_chg.dropna(),
+        tier_low="DURABLE",
+        tier_high="REGIME-DEP",
+        effect_low_pp=+8.2,
+        effect_high_pp=+0.9,
+        n_low=39,
+        n_high=37,
+        higher_is_riskier=True,  # rapid rate rise = stress (high = danger)
     )
 
     # MCAP_M2 — TOMBSTONE: failed stability test, shown for reference

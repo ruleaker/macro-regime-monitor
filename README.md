@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-28 05:24 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 05:34 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -24,7 +24,7 @@ _Last updated: **2026-05-28 05:24 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 A weighted combination of the validated signals, designed as a medium-term (swing) auxiliary read of where the market sits in its macro cycle. Extreme percentiles (top/bottom decile of the composite's own history) historically carry significant 12-month forward-return effects; the mid range is honestly inconclusive.
 
 <!-- BEGIN:COMPOSITE -->
-Composite value: `-0.001`  ·  Composite percentile: `44%`  ·  Zone: **MID** (**~ MID**)
+Composite value: `-0.001`  ·  Composite percentile: `38%`  ·  Zone: **MID** (**~ MID**)
 
 _MID (inconclusive)_
 
@@ -62,6 +62,7 @@ How to read the composite:
 | SOX vs SPX 3m RS | 43.470 | 99% | HIGH [BULL] | MOSTLY | +4.2pp |
 | Market cap / M2 (Buffett indicator variant) | 3.160 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
 | Russell 2000 vs SPX 3m RS | 1.463 | 64% | MID [mid] | — | — |
+| 10Y Treasury 3m change | 36.245 | 80% | MID [mid] | — | — |
 <!-- END:SIGNAL_TABLE -->
 
 Zone marker decodes to historical bias when this signal is in this zone — not a recommendation. See `research/findings.md` for the audit trail and limitations of each signal.

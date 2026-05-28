@@ -170,6 +170,55 @@ Single-signal drawdown highlights:
 - `NDX_SPX_RS LOW` (tech rolling over): mean DD -17.1%, P(DD ≤ -20%) = 46%. Confirms tech weakness is a real risk signal.
 - `MARGIN_M2 HIGH`: median DD only -4.9% (small) but p10 DD = -50% — wide dispersion. Sometimes continues (1999, 2021), sometimes catastrophic (2000, 2008).
 
+## v3.7 — A/B composite expansion: REVERTED (2026-05-28)
+
+User question: "Did the new factors (DXY/10Y) actually make the composite more accurate? I see no change in red/green zones."
+
+Honest answer: **They did not improve the composite. The composite was reverted to V2.**
+
+### The A/B test
+
+Built 4 candidate composites and tested fwd 12m return + 24m drawdown stats:
+
+| Candidate | Y10 sign | Asym (pp) | HIGH mean | HIGH P(DD≤-30%) | Current pct |
+|---|---|---:|---:|---:|---:|
+| V2 (4 components) | n/a | +43.0 | -8.9% | 50% | 37.8% |
+| V3a-wrongsign (Y10 invert=True) | ❌ backwards | +47.6 | -12.6% | 57% | 22.3% |
+| V3a-correct (Y10 invert=False) | ✅ aligned | +25.5 | **+6.7%** | 12% | 57.6% |
+| V3b (Y10 + DXY 3m chg) | ✅ | +25.2 | +6.7% | 12% | 65.0% |
+| V3c (+ DXY level) | n/a | +22.3 | +8.8% | 0% | 48.0% |
+
+### What happened
+
+My initial "V3a improves the composite" finding was wrong. The improvement only existed when Y10_3M_CHG was sign-inverted (invert=True), which is *semantically backwards* — it makes high signal value (rapid rate rise = stress) reduce composite, when it should increase it. With the correct sign:
+
+1. HIGH composite zone mean fwd return goes from -8.9% (V2) to +6.7% (V3a-correct). The signal disappears.
+2. P(DD ≤ -30%) in HIGH zone drops from 50% to 12%. Big loss of tail-risk warning power.
+3. Asymmetry drops from +43pp to +25pp.
+
+### Why adding Y10 hurts
+
+Y10_3M_CHG LOW (rapid rate drops) and MARGIN_M2 LOW (post-deleveraging) are highly correlated in crisis aftermath. They both fire in the same windows (2002-2003, 2009-2010, 2020-2021). Adding Y10 amplifies what MARGIN_M2 already captures rather than adding information.
+
+Similarly, DXY_LEVEL is regime-dependent (dot-com era artifact, same trap as MCAP_M2). DXY_3M_CHG has direction stability but weak magnitude.
+
+### The discipline lesson
+
+A composite is not "more validated signals = better composite". Component diversification matters more than component count. The A/B test was the right gate — without it we would have shipped a worse indicator and labeled it "improved".
+
+The Y10_3M_CHG LOW signal is still **real** at the standalone level (DURABLE +8.2pp at decile, p<0.001). But it just doesn't add information to the existing composite.
+
+### What stays from V3 research
+
+Even though the composite didn't change, the V3 research delivered real findings:
+
+- Yield curve at 36-month horizon is DURABLE (-17.5pp, p<0.001). Classic recession lead at the right horizon.
+- Cross-asset asymmetry: DXY extremes hurt SPX both directions, but help Gold (safe-haven flows).
+- Joint extremes: MARGIN_M2 HIGH ∧ YC LOW (N=11) — 27% hit rate, much worse than MARGIN alone.
+- Drawdown asymmetry: composite HIGH zone has 50% probability of -30% drawdown vs 0% for LOW zone. The composite's real value is on the *risk* axis, not the *return* axis.
+
+These are documented but not in the composite. They live as watch-list signals and analytical context.
+
 ## Open questions
 
 1. **Quintile thresholds vs decile**: should we test top-20% / bottom-20% to get more samples in extreme zones, particularly for the MARGIN_M2 and SOX_SPX_RS signals that have small N?

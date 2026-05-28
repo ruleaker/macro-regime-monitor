@@ -23,6 +23,12 @@ MIN_HISTORY_MONTHS = 60
 
 # Components: (signal_name, weight, invert_sign)
 # invert_sign=True means "higher signal = LESS dangerous" so we flip
+#
+# V3.7 A/B test (research/10_composite_ab.py) verified that adding Y10_3M_CHG
+# with the correct semantic sign HURTS the composite (asymmetry +43pp -> +25pp,
+# HIGH zone mean +6.7% instead of -8.9%). Y10 is correlated with MARGIN_M2 in
+# crisis aftermath so it dilutes rather than adds signal. Keep Y10 as a
+# standalone watch-list signal, not in the composite.
 COMPONENTS = [
     ("MARGIN_M2",  1.0, False),
     ("NDX_SPX_RS", 0.6, True),
@@ -30,28 +36,33 @@ COMPONENTS = [
     ("RUT_SPX_RS", 0.4, False),
 ]
 
+# Require at least this many components present each month. With 4 components,
+# require 3 of 4 (75%) for tolerant reporting-lag handling.
+MIN_COMPONENTS = 3
+
 EXTREME_LOW_PCT = 0.10
 EXTREME_HIGH_PCT = 0.90
 
-# Historical conditional stats from research/6_composite.py
-# (Hard-coded because the validation set is stable across runs of the same code)
+# Historical conditional stats from V2_CURRENT composite (4 components)
+# Tested in research/10_composite_ab.py with intersection-based min_components=3.
+# Sample: 1999-2026 with min 3 of 4 components present (252 months).
 DECILE_STATS = [
     # (decile_label, n, mean_pct, hit_rate, vs_full_pp)
-    ("0-10%",   14, 31.6, 100, +22.0),
-    ("10-30%",  52, 17.3,  85,  +7.6),
-    ("30-50%",  71, 10.0,  83,  +0.3),
-    ("50-70%",  85, 10.4,  84,  +0.7),
-    ("70-90%", 109,  6.7,  73,  -2.9),
-    ("90-100%", 24,-10.1,  29, -19.7),
+    ("0-10%",   16, 34.1, 100, +24.1),
+    ("10-30%",  47, 17.5,  87,  +7.5),
+    ("30-50%",  49, 10.6,  88,  +0.6),
+    ("50-70%",  60, 10.5,  85,  +0.5),
+    ("70-90%",  74,  5.4,  72,  -4.6),
+    ("90-100%", 6,  -8.9,  50, -18.9),
 ]
 
-# Fwd 24-month drawdown statistics by composite zone (from research/9_drawdown.py)
+# Fwd 24-month drawdown statistics by composite zone (V2_CURRENT, from research/10_composite_ab.py)
 # Tuple: (zone, N, mean_dd_pct, median_dd_pct, p10_dd_pct, p_dd_below_20, p_dd_below_30, cvar10_pct)
 DRAWDOWN_STATS = [
-    ("LOW (0-10%)",     14,   1.9,   1.7,  -7.5,   0,   0,  +8.4),
-    ("MID (10-90%)",   324,  -7.8,  -3.5, -25.3,  14,   7, -13.6),
-    ("HIGH (90-100%)",  28, -23.9, -30.8, -43.6,  64,  50, -37.1),
-    ("FULL",           366,  -8.6,  -3.8, -30.1,  17,  10, -20.2),
+    ("LOW (0-10%)",     16,   0.7,   0.9,  -7.0,   0,   0, +21.7),
+    ("MID (10-90%)",   230,  -7.7,  -3.5, -25.0,  15,   8, -15.0),
+    ("HIGH (90-100%)",  6, -24.1, -22.3, -40.0,  50,  50, -34.8),
+    ("FULL",           252,  -8.6,  -3.8, -30.0,  18,  11, -20.0),
 ]
 
 
@@ -127,10 +138,12 @@ def build_composite_series(signals_dict: dict[str, Signal]) -> CompositeState:
     combined = pd.DataFrame(centered_cols)
     weight_arr = np.array([weight_by_name[c] for c in combined.columns])
     mask = combined.notna().to_numpy().astype(float)
+    n_present = mask.sum(axis=1)
     weighted_vals = combined.fillna(0).to_numpy() * weight_arr
     weight_sum_row = (mask * weight_arr).sum(axis=1)
+    # Require at least MIN_COMPONENTS components present to avoid percentile contamination
     composite_vals = np.where(
-        weight_sum_row > 0,
+        (weight_sum_row > 0) & (n_present >= MIN_COMPONENTS),
         weighted_vals.sum(axis=1) / weight_sum_row,
         np.nan,
     )
