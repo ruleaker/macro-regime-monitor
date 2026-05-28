@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-28 05:41 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 05:49 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -51,6 +51,33 @@ How to read the composite:
 - **Extreme low (≤10%)** has historically been a strong bottom-leaning setup — the small N=14 is honest, but every single one was followed by a positive 12-month return.
 - **Extreme high (≥90%)** has historically been a top-leaning warning — 29% hit rate and -10% average forward return.
 - This is auxiliary judgment, not a trading trigger. Use it to size discretionary positioning, not to flip on a single reading.
+
+## Liquidity Trend Panel
+
+A separate, **faster** lens than the composite. The composite tells you "where are we in the cycle" (slow, percentile-based). This panel tells you "what is trending which way right now" using SuperTrend applied to monthly macro variables — designed to detect regime inflections within 1-3 months of the event itself.
+
+Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.0) on Net Liquidity flipped within 0.5m (2020) and 0.9m (2022). See `research/11_trend_inflection.py`.
+
+<!-- BEGIN:TREND_PANEL -->
+**Liquidity flow score: `+3/5` — **leans LIQUIDITY RELEASE****
+  · 4 variables in release direction, 1 in tightening, 0 neutral
+
+| Variable | Direction | Current | Last flip | Age | Implication |
+|---|:-:|---:|:-:|---:|:-:|
+| Fed Balance Sheet (WALCL) | ↑ UP | 6.717 | 2026-03 | 2.0m | 🟢 RELEASE |
+| Net Liquidity (NETLIQ) | ↑ UP | 5.881 | 2026-05 | 0.0m | 🟢 RELEASE |
+| M2 Money Supply (M2_LEVEL) | ↑ UP | 22,804 | 2024-02 | 26.0m | 🟢 RELEASE |
+| 10Y Treasury Yield (DGS10) | ↑ UP | 4.488 | 2026-04 | 1.0m | 🔴 TIGHTEN |
+| US Dollar Index (DXY) | ↓ DOWN | 99.435 | 2025-03 | 14.0m | 🟢 RELEASE |
+<!-- END:TREND_PANEL -->
+
+![Liquidity Trend Panel](charts/liquidity_trends.png)
+
+Reading guide:
+- **WALCL / NETLIQ / M2 trending UP** → Fed adding liquidity (QE-like) → risk-on regime.
+- **DGS10 / DXY trending UP** → tightening regime (rates rising or USD strengthening absorbs liquidity).
+- **Score +5** = unanimous liquidity release. **Score −5** = unanimous tightening.
+- Use the trend panel as the inflection alarm; use the composite for cycle-position context. They serve different timeframes.
 
 ## Signal table
 
