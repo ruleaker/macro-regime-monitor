@@ -55,49 +55,60 @@ class TrendState:
     direction_series: pd.Series = field(default_factory=pd.Series)
 
 
+# Tuned in research/13_trend_tuning_v2.py grid search.
+# 'transform' = derive series before applying SuperTrend (M2 -> 12m %change, etc.)
+# Per-variable (period, mult, smoothing) chosen for fewest false positives while
+# still detecting 2020-03 and 2022-01 inflections within 3 months.
 VARIABLES = {
     "WALCL": {
         "short_name": "Fed Balance Sheet",
-        "description": "Fed total assets - direct measure of QE/QT activity.",
+        "description": "Fed total assets — direct measure of QE/QT activity.",
         "higher_means_release": True,
         "fred_id": "WALCL",
-        "fred_scale": 1_000_000,        # millions -> trillions
+        "fred_scale": 1_000_000,
         "month_agg": "mean",
+        "transform": "raw",
+        "st_period": 5, "st_mult": 5.0, "smoothing": "raw",
     },
     "NETLIQ": {
         "short_name": "Net Liquidity",
-        "description": "Fed BS - TGA - RRP. Most sensitive inflection detector (0.5-0.9m lag at 2020/2022 pivots).",
+        "description": "Fed BS − TGA − RRP. Most sensitive inflection detector.",
         "higher_means_release": True,
         "compute": "netliq",
         "month_agg": "mean",
+        "transform": "raw",
+        "st_period": 5, "st_mult": 5.0, "smoothing": "raw",
     },
-    "M2_LEVEL": {
-        "short_name": "M2 Money Supply",
-        "description": "Broad money stock. Smoother than NETLIQ but lags QE/QT events.",
+    "M2_GROWTH": {
+        "short_name": "M2 12-month growth",
+        "description": "M2 year-over-year % change. Smooth proxy for monetary expansion/contraction.",
         "higher_means_release": True,
         "fred_id": "M2SL",
         "fred_scale": 1,
         "month_agg": "last",
+        "transform": "yoy_pct",
+        "st_period": 30, "st_mult": 5.0, "smoothing": "ma6",
     },
-    "DGS10": {
-        "short_name": "10Y Treasury Yield",
-        "description": "Long-end rates. Rising trend = market pricing tightening / inflation.",
+    "DGS10_6M_CHG": {
+        "short_name": "10Y Yield 6m change",
+        "description": "6-month change in 10Y Treasury yield (bps). Rising = market pricing tightening.",
         "higher_means_release": False,
         "fred_id": "DGS10",
         "fred_scale": 1,
         "month_agg": "mean",
+        "transform": "diff_6m_bps",
+        "st_period": 18, "st_mult": 5.0, "smoothing": "raw",
     },
-    "DXY": {
-        "short_name": "US Dollar Index",
-        "description": "USD strength. Strengthening DXY = global liquidity absorbed by USD.",
+    "DXY_3M_CHG": {
+        "short_name": "DXY 3-month % change",
+        "description": "3-month USD index change. Strengthening USD trend = global liquidity tightening.",
         "higher_means_release": False,
         "yahoo_ticker": "DX-Y.NYB",
         "month_agg": "last",
+        "transform": "pct_3m",
+        "st_period": 10, "st_mult": 5.0, "smoothing": "raw",
     },
 }
-
-SUPERTREND_PERIOD = 10
-SUPERTREND_MULT = 2.0
 
 
 def _fetch_fred(series: str) -> pd.Series:
@@ -134,8 +145,31 @@ def _m2_align(s: pd.Series) -> pd.Series:
     return out.sort_index()
 
 
-def supertrend(series: pd.Series, period: int = SUPERTREND_PERIOD,
-                mult: float = SUPERTREND_MULT) -> pd.DataFrame:
+def apply_transform(series: pd.Series, transform: str) -> pd.Series:
+    """Derive a series before applying SuperTrend (per-variable choice)."""
+    if transform == "raw":
+        return series
+    if transform == "yoy_pct":
+        return (series.pct_change(12) * 100).dropna()
+    if transform == "diff_6m_bps":
+        return ((series - series.shift(6)) * 100).dropna()
+    if transform == "pct_3m":
+        return (series.pct_change(3) * 100).dropna()
+    raise ValueError(f"Unknown transform: {transform}")
+
+
+def apply_smoothing(series: pd.Series, smoothing: str) -> pd.Series:
+    if smoothing == "raw":
+        return series
+    if smoothing == "ma3":
+        return series.rolling(3).mean().dropna()
+    if smoothing == "ma6":
+        return series.rolling(6).mean().dropna()
+    raise ValueError(f"Unknown smoothing: {smoothing}")
+
+
+def supertrend(series: pd.Series, period: int = 5,
+                mult: float = 5.0) -> pd.DataFrame:
     """SuperTrend adapted for monthly macro data. Returns DataFrame with
     columns: value, upper, lower, direction (+1/-1), flip (bool)."""
     s = series.dropna().copy()
@@ -174,31 +208,38 @@ def supertrend(series: pd.Series, period: int = SUPERTREND_PERIOD,
 
 
 def fetch_all_variables() -> dict[str, pd.Series]:
-    """Fetch monthly series for all variables. Returns dict keyed by var name."""
-    series_map: dict[str, pd.Series] = {}
-    # Direct FRED + Yahoo first
+    """Fetch monthly series for all variables, then apply per-variable transforms."""
+    raw_map: dict[str, pd.Series] = {}
+    # Pull raw FRED + Yahoo
     for vname, cfg in VARIABLES.items():
         if "fred_id" in cfg:
             raw = _fetch_fred(cfg["fred_id"])
-            if vname == "M2_LEVEL":
+            if cfg["fred_id"] == "M2SL":
                 raw = _m2_align(raw)
             else:
                 raw = _to_month(raw, cfg["month_agg"])
             if cfg.get("fred_scale", 1) != 1:
                 raw = raw / cfg["fred_scale"]
-            series_map[vname] = raw
+            raw_map[vname] = raw
         elif "yahoo_ticker" in cfg:
             raw = _fetch_yahoo(cfg["yahoo_ticker"])
-            series_map[vname] = _to_month(raw, cfg["month_agg"])
+            raw_map[vname] = _to_month(raw, cfg["month_agg"])
 
-    # Composite computations (NETLIQ)
-    walcl = series_map.get("WALCL")
+    # NETLIQ composite
+    walcl = raw_map.get("WALCL")
     wtregen = _to_month(_fetch_fred("WTREGEN"), "mean") / 1_000_000
-    rrp = _to_month(_fetch_fred("RRPONTSYD"), "mean") / 1_000   # billions -> trillions
+    rrp = _to_month(_fetch_fred("RRPONTSYD"), "mean") / 1_000
     if walcl is not None:
         netliq = (walcl - wtregen - rrp).dropna()
-        series_map["NETLIQ"] = netliq
+        raw_map["NETLIQ"] = netliq
 
+    # Apply transforms per variable
+    series_map: dict[str, pd.Series] = {}
+    for vname, cfg in VARIABLES.items():
+        if vname not in raw_map:
+            continue
+        transformed = apply_transform(raw_map[vname], cfg.get("transform", "raw"))
+        series_map[vname] = transformed
     return series_map
 
 
@@ -212,9 +253,13 @@ def liquidity_implication(direction: int, higher_means_release: bool) -> str:
 
 def build_trend_state(var_name: str, series: pd.Series) -> TrendState:
     cfg = VARIABLES[var_name]
-    st = supertrend(series, period=SUPERTREND_PERIOD, mult=SUPERTREND_MULT)
+    period = cfg.get("st_period", 5)
+    mult = cfg.get("st_mult", 5.0)
+    smoothing = cfg.get("smoothing", "raw")
+    smoothed = apply_smoothing(series, smoothing)
+    st = supertrend(smoothed, period=period, mult=mult)
     st = st.dropna(subset=["direction"])
-    if st.empty or len(st) < SUPERTREND_PERIOD + 2:
+    if st.empty or len(st) < period + 2:
         return TrendState(
             name=var_name, short_name=cfg["short_name"], description=cfg["description"],
             direction=0, current_value=float("nan"),

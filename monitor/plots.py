@@ -22,7 +22,7 @@ import pandas as pd
 
 from .signals import Signal, QUINTILE_LOW, QUINTILE_HIGH
 from .composite import CompositeState, EXTREME_LOW_PCT, EXTREME_HIGH_PCT, DECILE_STATS, DRAWDOWN_STATS
-from .trend import TrendState, supertrend
+from .trend import TrendState, supertrend, apply_smoothing, VARIABLES as TREND_VARS
 
 BG = "#0d1117"
 FG = "#e6edf3"
@@ -257,8 +257,10 @@ def plot_liquidity_trends(states: dict, spx: pd.Series, out_path: Path) -> Path:
     # Mark major flip events from each variable on the SPX panel for visual alignment
     flip_dates_release = set()
     flip_dates_tighten = set()
-    for _, st in items:
-        st_df = supertrend(st.series.dropna())
+    for name, st in items:
+        cfg = TREND_VARS.get(name, {})
+        sm = apply_smoothing(st.series.dropna(), cfg.get("smoothing", "raw"))
+        st_df = supertrend(sm, period=cfg.get("st_period", 5), mult=cfg.get("st_mult", 5.0))
         st_df = st_df[st_df.index >= start_date]
         flips = st_df[st_df["flip"]]
         for fd, row in flips.iterrows():
@@ -278,7 +280,9 @@ def plot_liquidity_trends(states: dict, spx: pd.Series, out_path: Path) -> Path:
 
     # ---- Variable panels ----
     for ax, (name, st) in zip(axes[1:], items):
-        st_df = supertrend(st.series.dropna())
+        cfg = TREND_VARS.get(name, {})
+        sm = apply_smoothing(st.series.dropna(), cfg.get("smoothing", "raw"))
+        st_df = supertrend(sm, period=cfg.get("st_period", 5), mult=cfg.get("st_mult", 5.0))
         st_df = st_df[st_df.index >= start_date]
         if st_df.empty:
             continue

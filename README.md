@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-05-28 05:52 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-05-28 06:01 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -59,16 +59,16 @@ A separate, **faster** lens than the composite. The composite tells you "where a
 Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.0) on Net Liquidity flipped within 0.5m (2020) and 0.9m (2022). See `research/11_trend_inflection.py`.
 
 <!-- BEGIN:TREND_PANEL -->
-**Liquidity flow score: `+3/5` — **leans LIQUIDITY RELEASE****
-  · 4 variables in release direction, 1 in tightening, 0 neutral
+**Liquidity flow score: `+1/5` — **MIXED / no consensus****
+  · 3 variables in release direction, 2 in tightening, 0 neutral
 
 | Variable | Direction | Current | Last flip | Age | Implication |
 |---|:-:|---:|:-:|---:|:-:|
-| Fed Balance Sheet (WALCL) | ↑ UP | 6.717 | 2026-03 | 2.0m | 🟢 RELEASE |
-| Net Liquidity (NETLIQ) | ↑ UP | 5.881 | 2026-05 | 0.0m | 🟢 RELEASE |
-| M2 Money Supply (M2_LEVEL) | ↑ UP | 22,804 | 2024-02 | 26.0m | 🟢 RELEASE |
-| 10Y Treasury Yield (DGS10) | ↑ UP | 4.488 | 2026-04 | 1.0m | 🔴 TIGHTEN |
-| US Dollar Index (DXY) | ↓ DOWN | 99.429 | 2025-03 | 14.0m | 🟢 RELEASE |
+| Fed Balance Sheet (WALCL) | ↑ UP | 6.717 | 2026-04 | 1.0m | 🟢 RELEASE |
+| Net Liquidity (NETLIQ) | ↓ DOWN | 5.881 | 2024-09 | 20.0m | 🔴 TIGHTEN |
+| M2 12-month growth (M2_GROWTH) | ↑ UP | 4.327 | 2024-08 | 19.9m | 🟢 RELEASE |
+| 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 39.435 | 2023-10 | 31.0m | 🔴 TIGHTEN |
+| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 1.845 | 2025-04 | 13.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)
