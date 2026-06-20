@@ -5,13 +5,13 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-06-19 23:04 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-06-20 23:16 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
 
 <!-- BEGIN:HEADLINE -->
-**Net 12-month historical effect from currently-triggered signals: `-4.2pp` — leans BEARISH.**
+**Net 12-month historical effect from currently-triggered signals: `-9.3pp` — leans BEARISH.**
 
 - Durable (Tier 1) signals triggered: **1 bearish, 0 bullish**
 - Mostly-directional (Tier 2) signals triggered: **0 bearish, 2 bullish**
@@ -24,7 +24,7 @@ _Last updated: **2026-06-19 23:04 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 A weighted combination of the validated signals, designed as a medium-term (swing) auxiliary read of where the market sits in its macro cycle. Extreme percentiles (top/bottom decile of the composite's own history) historically carry significant 12-month forward-return effects; the mid range is honestly inconclusive.
 
 <!-- BEGIN:COMPOSITE -->
-Composite value: `+0.036`  ·  Composite percentile: `42%`  ·  Zone: **MID** (**~ MID**)
+Composite value: `+0.049`  ·  Composite percentile: `44%`  ·  Zone: **MID** (**~ MID**)
 
 _MID (inconclusive)_
 
@@ -85,10 +85,10 @@ Reading guide:
 | Signal | Current value | Percentile | Zone | Tier | Effect (12m fwd SPX) |
 |---|---:|---:|:-:|:-:|---:|
 | Margin debt / M2 | 0.057 | 99% | HIGH [BEAR] | DURABLE | -13.2pp |
-| NDX vs SPX 3m RS | 11.480 | 94% | HIGH [BULL] | MOSTLY | +4.8pp |
-| SOX vs SPX 3m RS | 64.507 | 100% | HIGH [BULL] | MOSTLY | +4.2pp |
+| NDX vs SPX 3m RS | 12.689 | 96% | HIGH [BULL] | MOSTLY | +4.8pp |
+| SOX vs SPX 3m RS | 66.291 | 100% | HIGH [BULL] | MOSTLY | +4.2pp |
+| Russell 2000 vs SPX 3m RS | 5.022 | 86% | HIGH [BEAR] | REGIME-DEP | -5.1pp |
 | Market cap / M2 (Buffett indicator variant) | 3.160 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
-| Russell 2000 vs SPX 3m RS | 3.895 | 79% | MID [mid] | — | — |
 | 10Y Treasury 3m change | 24.640 | 70% | MID [mid] | — | — |
 <!-- END:SIGNAL_TABLE -->
 
