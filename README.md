@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-07-03 23:11 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-07-04 23:03 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -86,7 +86,7 @@ Reading guide:
 |---|---:|---:|:-:|:-:|---:|
 | Margin debt / M2 | 0.061 | 100% | HIGH [BEAR] | DURABLE | -13.2pp |
 | SOX vs SPX 3m RS | 15.802 | 90% | HIGH [BULL] | MOSTLY | +4.2pp |
-| Market cap / M2 (Buffett indicator variant) | 3.282 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
+| Market cap / M2 (Buffett indicator variant) | 2.019 | n/a | n/a [mid] | TOMBSTONE | *failed stability test* |
 | NDX vs SPX 3m RS | 2.923 | 62% | MID [mid] | — | — |
 | Russell 2000 vs SPX 3m RS | 3.086 | 73% | MID [mid] | — | — |
 | 10Y Treasury 3m change | 16.091 | 64% | MID [mid] | — | — |
