@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-07-26 23:03 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-07-27 23:09 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -24,9 +24,9 @@ _Last updated: **2026-07-26 23:03 UTC**  ·  Data: FRED · Yahoo Finance · FINR
 A weighted combination of the validated signals, designed as a medium-term (swing) auxiliary read of where the market sits in its macro cycle. Extreme percentiles (top/bottom decile of the composite's own history) historically carry significant 12-month forward-return effects; the mid range is honestly inconclusive.
 
 <!-- BEGIN:COMPOSITE -->
-Composite value: `+0.365`  ·  Composite percentile: `87%`  ·  Zone: **HIGH** (**~ MID**)
+Composite value: `+0.432`  ·  Composite percentile: `91%`  ·  Zone: **EXTREME_HIGH** (**↑ TOP-LEANING**)
 
-_HIGH (leaning warning)_
+_EXTREME HIGH (warning / top-leaning)_
 
 Built from 4 components: MARGIN_M2, NDX_SPX_RS, SOX_SPX_RS, RUT_SPX_RS.
 <!-- END:COMPOSITE -->
@@ -67,8 +67,8 @@ Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.
 | Fed Balance Sheet (WALCL) | ↑ UP | 6.738 | 2026-04 | 3.0m | 🟢 RELEASE |
 | Net Liquidity (NETLIQ) | ↓ DOWN | 5.926 | 2024-09 | 22.0m | 🔴 TIGHTEN |
 | M2 12-month growth (M2_GROWTH) | ↑ UP | 4.616 | 2024-08 | 21.0m | 🟢 RELEASE |
-| 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 35.775 | 2023-10 | 33.0m | 🔴 TIGHTEN |
-| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 3.289 | 2025-04 | 15.0m | 🟢 RELEASE |
+| 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 36.474 | 2023-10 | 33.0m | 🔴 TIGHTEN |
+| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 3.501 | 2025-04 | 15.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)
@@ -86,10 +86,10 @@ Reading guide:
 |---|---:|---:|:-:|:-:|---:|
 | Margin debt / M2 | 0.061 | 100% | HIGH [BEAR] | DURABLE | -13.2pp |
 | Market cap / M2 (Buffett indicator variant) | 3.282 | 100% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
-| NDX vs SPX 3m RS | -0.343 | 34% | MID [mid] | — | — |
-| SOX vs SPX 3m RS | 9.440 | 79% | MID [mid] | — | — |
-| Russell 2000 vs SPX 3m RS | 1.781 | 65% | MID [mid] | — | — |
-| 10Y Treasury 3m change | 25.216 | 71% | MID [mid] | — | — |
+| NDX vs SPX 3m RS | -0.674 | 33% | MID [mid] | — | — |
+| SOX vs SPX 3m RS | 6.978 | 70% | MID [mid] | — | — |
+| Russell 2000 vs SPX 3m RS | 2.390 | 70% | MID [mid] | — | — |
+| 10Y Treasury 3m change | 25.914 | 71% | MID [mid] | — | — |
 <!-- END:SIGNAL_TABLE -->
 
 Zone marker decodes to historical bias when this signal is in this zone — not a recommendation. See `research/findings.md` for the audit trail and limitations of each signal.
