@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-08-08 22:35 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-08-09 22:37 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -68,7 +68,7 @@ Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.
 | Net Liquidity (NETLIQ) | ↓ DOWN | 5.839 | 2024-09 | 23.0m | 🔴 TIGHTEN |
 | M2 12-month growth (M2_GROWTH) | ↑ UP | 4.865 | 2024-08 | 21.9m | 🟢 RELEASE |
 | 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 53.671 | 2023-10 | 34.0m | 🔴 TIGHTEN |
-| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 0.698 | 2025-04 | 16.0m | 🟢 RELEASE |
+| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 0.725 | 2025-04 | 16.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)
