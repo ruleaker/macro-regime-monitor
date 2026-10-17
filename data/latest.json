@@ -1,5 +1,5 @@
 {
-  "captured_utc": "2026-10-17 00:14 UTC",
+  "captured_utc": "2026-10-17 23:54 UTC",
   "net_effect_pp": -6.4,
   "triggered_durable_bear": [
     {
@@ -24,7 +24,7 @@
     {
       "name": "NDX_SPX_RS",
       "short_name": "NDX vs SPX 3m RS",
-      "current_value": 0.9429261868334482,
+      "current_value": 0.9429329415682641,
       "current_percentile": 0.45102040816326533,
       "zone": "MID",
       "tier": "\u2014",
@@ -34,7 +34,7 @@
     {
       "name": "SOX_SPX_RS",
       "short_name": "SOX vs SPX 3m RS",
-      "current_value": -3.7182627374753197,
+      "current_value": -3.7182374103557736,
       "current_percentile": 0.27906976744186046,
       "zone": "MID",
       "tier": "\u2014",
