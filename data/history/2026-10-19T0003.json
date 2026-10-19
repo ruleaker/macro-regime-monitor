@@ -1,0 +1,75 @@
+{
+  "captured_utc": "2026-10-19 00:03 UTC",
+  "net_effect_pp": -6.4,
+  "triggered_durable_bear": [
+    {
+      "name": "MARGIN_M2",
+      "effect_pp": -13.2
+    }
+  ],
+  "triggered_durable_bull": [],
+  "triggered_mostly_bear": [],
+  "triggered_mostly_bull": [],
+  "rows": [
+    {
+      "name": "MARGIN_M2",
+      "short_name": "Margin debt / M2",
+      "current_value": 0.062281817091351506,
+      "current_percentile": 0.9943820224719101,
+      "zone": "HIGH",
+      "tier": "DURABLE",
+      "effect_pp": -13.2,
+      "latest_date": "2026-08"
+    },
+    {
+      "name": "NDX_SPX_RS",
+      "short_name": "NDX vs SPX 3m RS",
+      "current_value": 0.9429329415682641,
+      "current_percentile": 0.45102040816326533,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "short_name": "SOX vs SPX 3m RS",
+      "current_value": -3.7182374103557736,
+      "current_percentile": 0.27906976744186046,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "RUT_SPX_RS",
+      "short_name": "Russell 2000 vs SPX 3m RS",
+      "current_value": -9.220040705175958,
+      "current_percentile": 0.034261241970021415,
+      "zone": "LOW",
+      "tier": "REGIME-DEP",
+      "effect_pp": 5.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "Y10_3M_CHG",
+      "short_name": "10Y Treasury 3m change",
+      "current_value": 63.44545454545454,
+      "current_percentile": 0.912258064516129,
+      "zone": "HIGH",
+      "tier": "REGIME-DEP",
+      "effect_pp": 0.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "MCAP_M2",
+      "short_name": "Market cap / M2 (Buffett indicator variant)",
+      "current_value": 3.3014840898478335,
+      "current_percentile": 1.0,
+      "zone": "HIGH",
+      "tier": "TOMBSTONE",
+      "effect_pp": null,
+      "latest_date": "2026-08"
+    }
+  ]
+}
