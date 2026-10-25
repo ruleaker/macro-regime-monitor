@@ -1,0 +1,80 @@
+{
+  "captured_utc": "2026-10-25 00:09 UTC",
+  "net_effect_pp": -11.9,
+  "triggered_durable_bear": [
+    {
+      "name": "MARGIN_M2",
+      "effect_pp": -13.2
+    }
+  ],
+  "triggered_durable_bull": [],
+  "triggered_mostly_bear": [
+    {
+      "name": "SOX_SPX_RS",
+      "effect_pp": -5.5
+    }
+  ],
+  "triggered_mostly_bull": [],
+  "rows": [
+    {
+      "name": "MARGIN_M2",
+      "short_name": "Margin debt / M2",
+      "current_value": 0.062281817091351506,
+      "current_percentile": 0.9943820224719101,
+      "zone": "HIGH",
+      "tier": "DURABLE",
+      "effect_pp": -13.2,
+      "latest_date": "2026-08"
+    },
+    {
+      "name": "NDX_SPX_RS",
+      "short_name": "NDX vs SPX 3m RS",
+      "current_value": 0.6171742850252571,
+      "current_percentile": 0.4142857142857143,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "short_name": "SOX vs SPX 3m RS",
+      "current_value": -6.374564144286998,
+      "current_percentile": 0.19638242894056848,
+      "zone": "LOW",
+      "tier": "MOSTLY",
+      "effect_pp": -5.5,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "RUT_SPX_RS",
+      "short_name": "Russell 2000 vs SPX 3m RS",
+      "current_value": -6.9666798724399515,
+      "current_percentile": 0.08565310492505353,
+      "zone": "LOW",
+      "tier": "REGIME-DEP",
+      "effect_pp": 5.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "Y10_3M_CHG",
+      "short_name": "10Y Treasury 3m change",
+      "current_value": 58.64545454545427,
+      "current_percentile": 0.896774193548387,
+      "zone": "HIGH",
+      "tier": "REGIME-DEP",
+      "effect_pp": 0.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "MCAP_M2",
+      "short_name": "Market cap / M2 (Buffett indicator variant)",
+      "current_value": 3.3014840898478335,
+      "current_percentile": 1.0,
+      "zone": "HIGH",
+      "tier": "TOMBSTONE",
+      "effect_pp": null,
+      "latest_date": "2026-08"
+    }
+  ]
+}
