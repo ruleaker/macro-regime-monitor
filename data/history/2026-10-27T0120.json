@@ -1,0 +1,75 @@
+{
+  "captured_utc": "2026-10-27 01:20 UTC",
+  "net_effect_pp": -6.4,
+  "triggered_durable_bear": [
+    {
+      "name": "MARGIN_M2",
+      "effect_pp": -13.2
+    }
+  ],
+  "triggered_durable_bull": [],
+  "triggered_mostly_bear": [],
+  "triggered_mostly_bull": [],
+  "rows": [
+    {
+      "name": "MARGIN_M2",
+      "short_name": "Margin debt / M2",
+      "current_value": 0.062281817091351506,
+      "current_percentile": 0.9943820224719101,
+      "zone": "HIGH",
+      "tier": "DURABLE",
+      "effect_pp": -13.2,
+      "latest_date": "2026-08"
+    },
+    {
+      "name": "NDX_SPX_RS",
+      "short_name": "NDX vs SPX 3m RS",
+      "current_value": 1.0113048930768587,
+      "current_percentile": 0.45714285714285713,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "short_name": "SOX vs SPX 3m RS",
+      "current_value": -4.399816326507411,
+      "current_percentile": 0.25839793281653745,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "RUT_SPX_RS",
+      "short_name": "Russell 2000 vs SPX 3m RS",
+      "current_value": -7.259790970838309,
+      "current_percentile": 0.07708779443254818,
+      "zone": "LOW",
+      "tier": "REGIME-DEP",
+      "effect_pp": 5.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "Y10_3M_CHG",
+      "short_name": "10Y Treasury 3m change",
+      "current_value": 57.48295454545431,
+      "current_percentile": 0.8929032258064517,
+      "zone": "HIGH",
+      "tier": "REGIME-DEP",
+      "effect_pp": 0.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "MCAP_M2",
+      "short_name": "Market cap / M2 (Buffett indicator variant)",
+      "current_value": 3.3014840898478335,
+      "current_percentile": 1.0,
+      "zone": "HIGH",
+      "tier": "TOMBSTONE",
+      "effect_pp": null,
+      "latest_date": "2026-08"
+    }
+  ]
+}
