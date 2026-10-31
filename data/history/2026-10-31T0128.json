@@ -1,0 +1,80 @@
+{
+  "captured_utc": "2026-10-31 01:28 UTC",
+  "net_effect_pp": -11.9,
+  "triggered_durable_bear": [
+    {
+      "name": "MARGIN_M2",
+      "effect_pp": -13.2
+    }
+  ],
+  "triggered_durable_bull": [],
+  "triggered_mostly_bear": [
+    {
+      "name": "SOX_SPX_RS",
+      "effect_pp": -5.5
+    }
+  ],
+  "triggered_mostly_bull": [],
+  "rows": [
+    {
+      "name": "MARGIN_M2",
+      "short_name": "Margin debt / M2",
+      "current_value": 0.06321262156240524,
+      "current_percentile": 0.9943977591036415,
+      "zone": "HIGH",
+      "tier": "DURABLE",
+      "effect_pp": -13.2,
+      "latest_date": "2026-09"
+    },
+    {
+      "name": "NDX_SPX_RS",
+      "short_name": "NDX vs SPX 3m RS",
+      "current_value": -0.8052670718408428,
+      "current_percentile": 0.3224489795918367,
+      "zone": "MID",
+      "tier": "\u2014",
+      "effect_pp": null,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "SOX_SPX_RS",
+      "short_name": "SOX vs SPX 3m RS",
+      "current_value": -6.627872502245513,
+      "current_percentile": 0.18604651162790697,
+      "zone": "LOW",
+      "tier": "MOSTLY",
+      "effect_pp": -5.5,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "RUT_SPX_RS",
+      "short_name": "Russell 2000 vs SPX 3m RS",
+      "current_value": -5.219839365789691,
+      "current_percentile": 0.14132762312633834,
+      "zone": "LOW",
+      "tier": "REGIME-DEP",
+      "effect_pp": 5.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "Y10_3M_CHG",
+      "short_name": "10Y Treasury 3m change",
+      "current_value": 54.09545454545439,
+      "current_percentile": 0.8787096774193548,
+      "zone": "HIGH",
+      "tier": "REGIME-DEP",
+      "effect_pp": 0.9,
+      "latest_date": "2026-10"
+    },
+    {
+      "name": "MCAP_M2",
+      "short_name": "Market cap / M2 (Buffett indicator variant)",
+      "current_value": 3.2476027861654826,
+      "current_percentile": 0.9933774834437086,
+      "zone": "HIGH",
+      "tier": "TOMBSTONE",
+      "effect_pp": null,
+      "latest_date": "2026-09"
+    }
+  ]
+}
