@@ -5,7 +5,7 @@
 > Tracks a curated set of liquidity, valuation, and market-internal signals against their historical extreme zones. Updates daily via GitHub Actions. **Not a strategy. A descriptive view of where we are.**
 
 <!-- BEGIN:STAMP -->
-_Last updated: **2026-11-07 01:44 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
+_Last updated: **2026-11-08 01:13 UTC**  ·  Data: FRED · Yahoo Finance · FINRA_
 <!-- END:STAMP -->
 
 ## Current state
@@ -68,7 +68,7 @@ Validated at the 2020-03 Fed COVID pivot and 2022-01 QT pivot: SuperTrend(10, 2.
 | Net Liquidity (NETLIQ) | ↓ DOWN | 5.790 | 2024-09 | 26.0m | 🔴 TIGHTEN |
 | M2 12-month growth (M2_GROWTH) | ↑ UP | 5.312 | 2024-08 | 25.0m | 🟢 RELEASE |
 | 10Y Yield 6m change (DGS10_6M_CHG) | ↑ UP | 41.600 | 2023-10 | 37.0m | 🔴 TIGHTEN |
-| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 2.865 | 2025-04 | 19.0m | 🟢 RELEASE |
+| DXY 3-month % change (DXY_3M_CHG) | ↓ DOWN | 2.886 | 2025-04 | 19.0m | 🟢 RELEASE |
 <!-- END:TREND_PANEL -->
 
 ![Liquidity Trend Panel](charts/liquidity_trends.png)
@@ -88,7 +88,7 @@ Reading guide:
 | SOX vs SPX 3m RS | -15.181 | 8% | LOW [BEAR] | MOSTLY | -5.5pp |
 | NDX vs SPX 3m RS | -4.533 | 14% | LOW [BEAR] | REGIME-DEP | -8.3pp |
 | Market cap / M2 (Buffett indicator variant) | 3.248 | 99% | HIGH [BEAR] | TOMBSTONE | *failed stability test* |
-| Russell 2000 vs SPX 3m RS | -2.939 | 28% | MID [mid] | — | — |
+| Russell 2000 vs SPX 3m RS | -2.938 | 28% | MID [mid] | — | — |
 | 10Y Treasury 3m change | 21.571 | 68% | MID [mid] | — | — |
 <!-- END:SIGNAL_TABLE -->
 
