@@ -1,5 +1,5 @@
 {
-  "captured_utc": "2026-11-09 01:33 UTC",
+  "captured_utc": "2026-11-10 04:00 UTC",
   "net_effect_pp": -27.0,
   "triggered_durable_bear": [
     {
@@ -29,8 +29,8 @@
     {
       "name": "NDX_SPX_RS",
       "short_name": "NDX vs SPX 3m RS",
-      "current_value": -4.533410097909519,
-      "current_percentile": 0.1446028513238289,
+      "current_value": -3.5505851047098025,
+      "current_percentile": 0.1934826883910387,
       "zone": "LOW",
       "tier": "REGIME-DEP",
       "effect_pp": -8.3,
@@ -39,8 +39,8 @@
     {
       "name": "SOX_SPX_RS",
       "short_name": "SOX vs SPX 3m RS",
-      "current_value": -15.180746499741083,
-      "current_percentile": 0.07731958762886598,
+      "current_value": -11.444302573108478,
+      "current_percentile": 0.10824742268041238,
       "zone": "LOW",
       "tier": "MOSTLY",
       "effect_pp": -5.5,
@@ -49,8 +49,8 @@
     {
       "name": "RUT_SPX_RS",
       "short_name": "Russell 2000 vs SPX 3m RS",
-      "current_value": -2.938380626559023,
-      "current_percentile": 0.2777777777777778,
+      "current_value": -2.177940254605504,
+      "current_percentile": 0.34615384615384615,
       "zone": "MID",
       "tier": "\u2014",
       "effect_pp": null,
@@ -59,8 +59,8 @@
     {
       "name": "Y10_3M_CHG",
       "short_name": "10Y Treasury 3m change",
-      "current_value": 21.57142857142862,
-      "current_percentile": 0.6842783505154639,
+      "current_value": 20.77142857142862,
+      "current_percentile": 0.6817010309278351,
       "zone": "MID",
       "tier": "\u2014",
       "effect_pp": null,
