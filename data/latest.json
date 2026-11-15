@@ -1,5 +1,5 @@
 {
-  "captured_utc": "2026-11-14 02:08 UTC",
+  "captured_utc": "2026-11-15 01:39 UTC",
   "net_effect_pp": -27.0,
   "triggered_durable_bear": [
     {
@@ -29,7 +29,7 @@
     {
       "name": "NDX_SPX_RS",
       "short_name": "NDX vs SPX 3m RS",
-      "current_value": -3.575593484039108,
+      "current_value": -3.5755800048882347,
       "current_percentile": 0.1934826883910387,
       "zone": "LOW",
       "tier": "REGIME-DEP",
@@ -39,7 +39,7 @@
     {
       "name": "SOX_SPX_RS",
       "short_name": "SOX vs SPX 3m RS",
-      "current_value": -10.591295416258395,
+      "current_value": -10.591321232463724,
       "current_percentile": 0.12371134020618557,
       "zone": "LOW",
       "tier": "MOSTLY",
@@ -49,7 +49,7 @@
     {
       "name": "RUT_SPX_RS",
       "short_name": "Russell 2000 vs SPX 3m RS",
-      "current_value": -4.059838713141694,
+      "current_value": -4.059821925484242,
       "current_percentile": 0.20085470085470086,
       "zone": "MID",
       "tier": "\u2014",
